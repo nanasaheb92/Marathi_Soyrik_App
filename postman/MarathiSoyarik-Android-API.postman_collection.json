@@ -1,0 +1,2242 @@
+﻿{
+    "info":  {
+                 "_postman_id":  "7b653857-4d53-4f09-b8f9-6f978c3ec0f8",
+                 "name":  "Marathi Soyarik Android API",
+                 "schema":  "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+                 "description":  "Collection generated from Flutter Android app API usage. Default base URL is set to swapna.kothulefarm.in with apis path prefix. Most POST requests use form-data to match Dio FormData usage in the app."
+             },
+    "event":  [
+                  {
+                      "listen":  "prerequest",
+                      "script":  {
+                                     "type":  "text/javascript",
+                                     "exec":  [
+                                                  "const target = (pm.collectionVariables.get(\u0027target_env\u0027) || \u0027local\u0027).toLowerCase();",
+                                                  "const localBase = pm.collectionVariables.get(\u0027local_base_url\u0027) || \u0027http://localhost/su\u0027;",
+                                                  "const prodBase = pm.collectionVariables.get(\u0027production_base_url\u0027) || \u0027https://swapna.kothulefarm.in\u0027;",
+                                                  "pm.collectionVariables.set(\u0027base_url\u0027, target === \u0027production\u0027 ? prodBase : localBase);",
+                                                  "pm.request.headers.upsert({ key: \u0027Accept\u0027, value: \u0027application/json\u0027 });"
+                                              ]
+                                 }
+                  }
+              ],
+    "variable":  [
+                     {
+                         "key":  "base_url",
+                         "value":  "http://localhost/su"
+                     },
+                     {
+                         "key":  "api_path",
+                         "value":  "apis"
+                     },
+                     {
+                         "key":  "user_id",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "profile_id",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "recipient_id",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "v_id",
+                         "value":  ""
+                     },
+                     {
+                         "key":  "cat_id",
+                         "value":  "1"
+                     },
+                     {
+                         "key":  "day",
+                         "value":  "1"
+                     },
+                     {
+                         "key":  "local_base_url",
+                         "value":  "http://localhost/su"
+                     },
+                     {
+                         "key":  "production_base_url",
+                         "value":  "https://swapna.kothulefarm.in"
+                     },
+                     {
+                         "key":  "target_env",
+                         "value":  "local"
+                     }
+                 ],
+    "item":  [
+                 {
+                     "name":  "Auth And Account",
+                     "item":  [
+                                  {
+                                      "name":  "Login",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "email",
+                                                                                        "value":  "test@example.com",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "password",
+                                                                                        "value":  "123456",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/login.php"
+                                                  },
+                                      "event":  [
+                                                    {
+                                                        "listen":  "test",
+                                                        "script":  {
+                                                                       "type":  "text/javascript",
+                                                                       "exec":  [
+                                                                                    "let json = {};",
+                                                                                    "try { json = pm.response.json(); } catch (e) {}",
+                                                                                    "const uid = json.user_id || (json.user \u0026\u0026 (json.user.user_id || json.user.id)) || (json.data \u0026\u0026 json.data.user_id);",
+                                                                                    "if (uid) {",
+                                                                                    "  pm.collectionVariables.set(\u0027user_id\u0027, String(uid));",
+                                                                                    "  pm.collectionVariables.set(\u0027v_id\u0027, String(uid));",
+                                                                                    "}",
+                                                                                    "pm.test(\u0027Login response received\u0027, function () { pm.expect(pm.response.code).to.be.oneOf([200, 201]); });"
+                                                                                ]
+                                                                   }
+                                                    }
+                                                ]
+                                  },
+                                  {
+                                      "name":  "Register",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "email",
+                                                                                        "value":  "newuser@example.com",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "password",
+                                                                                        "value":  "123456",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "name",
+                                                                                        "value":  "Demo User",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "DOB",
+                                                                                        "value":  "1998-01-01",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "location",
+                                                                                        "value":  "Pune",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "mobile",
+                                                                                        "value":  "9876543210",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "gender",
+                                                                                        "value":  "Male",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "marital-status",
+                                                                                        "value":  "Never Married",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "religion",
+                                                                                        "value":  "Hindu",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "caste",
+                                                                                        "value":  "Maratha",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/register.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Forgot Password",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "email",
+                                                                                        "value":  "test@example.com",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/forgot-password.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Profile Details",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/profile-details.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Logout",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{base_url}}/{{api_path}}/logout"
+                                                  }
+                                  }
+                              ]
+                 },
+                 {
+                     "name":  "Master Data And Discovery",
+                     "item":  [
+                                  {
+                                      "name":  "Banners",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{base_url}}/{{api_path}}/banners"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Slider All",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{base_url}}/{{api_path}}/slider/all"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Quote Get Next",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{base_url}}/{{api_path}}/quote/get-next/{{day}}"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "News Categories",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{base_url}}/{{api_path}}/news-categories"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "News Blogs By Category",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{base_url}}/{{api_path}}/news-blogs/{{cat_id}}"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Packages",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{base_url}}/{{api_path}}/packages.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "My Package",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/my_package.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Master Data Countries",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{base_url}}/{{api_path}}/master-data.php?data=countries",
+                                                                  "host":  [
+                                                                               "{{base_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "{{api_path}}",
+                                                                               "master-data.php"
+                                                                           ],
+                                                                  "query":  [
+                                                                                {
+                                                                                    "key":  "data",
+                                                                                    "value":  "countries"
+                                                                                }
+                                                                            ]
+                                                              }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Master Data States",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{base_url}}/{{api_path}}/master-data.php?data=states\u0026country_id=1",
+                                                                  "host":  [
+                                                                               "{{base_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "{{api_path}}",
+                                                                               "master-data.php"
+                                                                           ],
+                                                                  "query":  [
+                                                                                {
+                                                                                    "key":  "data",
+                                                                                    "value":  "states"
+                                                                                },
+                                                                                {
+                                                                                    "key":  "country_id",
+                                                                                    "value":  "1"
+                                                                                }
+                                                                            ]
+                                                              }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Master Data Cities",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{base_url}}/{{api_path}}/master-data.php?data=cities\u0026state_id=1",
+                                                                  "host":  [
+                                                                               "{{base_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "{{api_path}}",
+                                                                               "master-data.php"
+                                                                           ],
+                                                                  "query":  [
+                                                                                {
+                                                                                    "key":  "data",
+                                                                                    "value":  "cities"
+                                                                                },
+                                                                                {
+                                                                                    "key":  "state_id",
+                                                                                    "value":  "1"
+                                                                                }
+                                                                            ]
+                                                              }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Master Data Job Categories",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{base_url}}/{{api_path}}/master-data.php?data=jobcategories",
+                                                                  "host":  [
+                                                                               "{{base_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "{{api_path}}",
+                                                                               "master-data.php"
+                                                                           ],
+                                                                  "query":  [
+                                                                                {
+                                                                                    "key":  "data",
+                                                                                    "value":  "jobcategories"
+                                                                                }
+                                                                            ]
+                                                              }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Master Data Mother Tongues",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{base_url}}/{{api_path}}/master-data.php?data=mothertongues",
+                                                                  "host":  [
+                                                                               "{{base_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "{{api_path}}",
+                                                                               "master-data.php"
+                                                                           ],
+                                                                  "query":  [
+                                                                                {
+                                                                                    "key":  "data",
+                                                                                    "value":  "mothertongues"
+                                                                                }
+                                                                            ]
+                                                              }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Master Data Castes",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  {
+                                                                  "raw":  "{{base_url}}/{{api_path}}/master-data.php?data=castes",
+                                                                  "host":  [
+                                                                               "{{base_url}}"
+                                                                           ],
+                                                                  "path":  [
+                                                                               "{{api_path}}",
+                                                                               "master-data.php"
+                                                                           ],
+                                                                  "query":  [
+                                                                                {
+                                                                                    "key":  "data",
+                                                                                    "value":  "castes"
+                                                                                }
+                                                                            ]
+                                                              }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Success Stories",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{base_url}}/{{api_path}}/success-stories.php"
+                                                  }
+                                  }
+                              ]
+                 },
+                 {
+                     "name":  "Profile Settings And Details",
+                     "item":  [
+                                  {
+                                      "name":  "Fetch Profile Visibility Status",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "check_status",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/update-visibility-status.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Update Profile Visibility Status",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "contact_status",
+                                                                                        "value":  "on",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "photo_status",
+                                                                                        "value":  "on",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "email_status",
+                                                                                        "value":  "on",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/update-visibility-status.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Save Basic Details",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "name",
+                                                                                        "value":  "Demo User",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "dob",
+                                                                                        "value":  "1998-01-01",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "height",
+                                                                                        "value":  "5.8",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "weight",
+                                                                                        "value":  "70",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "gender",
+                                                                                        "value":  "Male",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "marital_status",
+                                                                                        "value":  "Never Married",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "hobby",
+                                                                                        "value":  "Reading",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "birthtime",
+                                                                                        "value":  "10:00",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "birthplace",
+                                                                                        "value":  "Pune",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "children",
+                                                                                        "value":  "0",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "mothertounge",
+                                                                                        "value":  "Marathi",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "languages",
+                                                                                        "value":  "Marathi,Hindi,English",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "created_by",
+                                                                                        "value":  "Self",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/basic-details-update.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Get Basic Details",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/get-basic-details.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Save Religious Details",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "religion",
+                                                                                        "value":  "Hindu",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "star",
+                                                                                        "value":  "Rohini",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "caste",
+                                                                                        "value":  "Maratha",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "horoscope",
+                                                                                        "value":  "Yes",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "subcaste",
+                                                                                        "value":  "",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "gotra",
+                                                                                        "value":  "",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "manglik",
+                                                                                        "value":  "No",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "moonsign",
+                                                                                        "value":  "",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "gan",
+                                                                                        "value":  "",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "rashi",
+                                                                                        "value":  "",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "charan",
+                                                                                        "value":  "",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "devak",
+                                                                                        "value":  "",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/religious-info-update.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Get Religious Details",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/get-religious-info.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Save Education Occupation Details",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "education",
+                                                                                        "value":  "Graduate",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "occupation",
+                                                                                        "value":  "Engineer",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "employee_in",
+                                                                                        "value":  "Private",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "designation",
+                                                                                        "value":  "Software Engineer",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "annual_income",
+                                                                                        "value":  "1000000",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/education-occupation-update.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Get Education Occupation Details",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/get-education-occupation.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Save Lifestyle Details",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "body_type",
+                                                                                        "value":  "Athletic",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "eating_habbit",
+                                                                                        "value":  "Veg",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "skin_tone",
+                                                                                        "value":  "Fair",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "smoking_habbit",
+                                                                                        "value":  "No",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "blood_group",
+                                                                                        "value":  "O+",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "drinking_habbit",
+                                                                                        "value":  "No",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/lifestyle-update.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Get Lifestyle Details",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/get-lifestyle.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Save Location Details",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "country",
+                                                                                        "value":  "1",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "state",
+                                                                                        "value":  "1",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "city",
+                                                                                        "value":  "1",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "address",
+                                                                                        "value":  "Address",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "residance",
+                                                                                        "value":  "Own",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "time_to_call",
+                                                                                        "value":  "Anytime",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/location-details-update.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Get Location Details",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/get-location-details.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Save Family Details",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "family_type",
+                                                                                        "value":  "Nuclear",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "fathers_name",
+                                                                                        "value":  "Father Name",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "fathers_occupation",
+                                                                                        "value":  "Business",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "mothers_name",
+                                                                                        "value":  "Mother Name",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "mothers_occupation",
+                                                                                        "value":  "Homemaker",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "no_of_brothers",
+                                                                                        "value":  "1",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "no_of_married_brothers",
+                                                                                        "value":  "0",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "no_of_sisters",
+                                                                                        "value":  "1",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "no_of_married_sisters",
+                                                                                        "value":  "0",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "about_family",
+                                                                                        "value":  "Simple family",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/family-details-update.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Get Family Details",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/get-family-details.php"
+                                                  }
+                                  }
+                              ]
+                 },
+                 {
+                     "name":  "Uploads",
+                     "item":  [
+                                  {
+                                      "name":  "Upload Document",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "file",
+                                                                                        "type":  "file",
+                                                                                        "src":  ""
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/upload-document.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Upload Other Pictures",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "photo1",
+                                                                                        "type":  "file",
+                                                                                        "src":  ""
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "photo2",
+                                                                                        "type":  "file",
+                                                                                        "src":  ""
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "photo3",
+                                                                                        "type":  "file",
+                                                                                        "src":  ""
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "photo4",
+                                                                                        "type":  "file",
+                                                                                        "src":  ""
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/upload-other-pictures.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Get Document",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/get-document.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Get Other Pictures",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/get-other-pictures.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Common Upload Endpoint",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "file",
+                                                                                        "type":  "file",
+                                                                                        "src":  ""
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/upload"
+                                                  }
+                                  }
+                              ]
+                 },
+                 {
+                     "name":  "Preferences",
+                     "item":  [
+                                  {
+                                      "name":  "Update Partner Preference",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "v_id",
+                                                                                        "value":  "{{v_id}}",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "looking_for",
+                                                                                        "value":  "Bride",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "skin_tone",
+                                                                                        "value":  "Any",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "mothertounge",
+                                                                                        "value":  "Marathi",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "from_age",
+                                                                                        "value":  "21",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "to_age",
+                                                                                        "value":  "29",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "from_height",
+                                                                                        "value":  "5.0",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "to_height",
+                                                                                        "value":  "6.0",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "eating_habit",
+                                                                                        "value":  "Any",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "drinking_habit",
+                                                                                        "value":  "Any",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "general_expt",
+                                                                                        "value":  "",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/update_partner_preferance.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Get Partner Preference",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "v_id",
+                                                                                        "value":  "{{v_id}}",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/get_partner_preferance.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Update Religious Preference",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "v_id",
+                                                                                        "value":  "{{v_id}}",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "religon",
+                                                                                        "value":  "Hindu",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "caste",
+                                                                                        "value":  "Maratha",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "manglik",
+                                                                                        "value":  "No",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "star",
+                                                                                        "value":  "Rohini",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/update_religious_preference.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Get Religious Preference",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "v_id",
+                                                                                        "value":  "{{v_id}}",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/get_religious_preference.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Update Location Preference",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "v_id",
+                                                                                        "value":  "{{v_id}}",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "country",
+                                                                                        "value":  "1",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "state",
+                                                                                        "value":  "1",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "city",
+                                                                                        "value":  "1",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "residence",
+                                                                                        "value":  "Any",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/update_Location_Details.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Get Location Preference",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "v_id",
+                                                                                        "value":  "{{v_id}}",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/get_Location_Details.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Update Education Preference",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "v_id",
+                                                                                        "value":  "{{v_id}}",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "education",
+                                                                                        "value":  "Graduate",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "occupation",
+                                                                                        "value":  "Engineer",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "annual_income",
+                                                                                        "value":  "1000000",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/update_education_occupation_preferance.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Get Education Preference",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "v_id",
+                                                                                        "value":  "{{v_id}}",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/get_education_occupation_preferance.php"
+                                                  }
+                                  }
+                              ]
+                 },
+                 {
+                     "name":  "Matches And Interactions",
+                     "item":  [
+                                  {
+                                      "name":  "Show Shortlist Profiles",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "user_id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/show_shortlist_profile.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Matches",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "page",
+                                                                                        "value":  "1",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/matches.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Viewed My Profile",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/viewed_my_profile.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Viewed Profile",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "id",
+                                                                                        "value":  "{{profile_id}}",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/viewed_profile.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Send Interest",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "recipient_id",
+                                                                                        "value":  "{{recipient_id}}",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "sender_id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/send-interest.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Shortlist",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "profile_id",
+                                                                                        "value":  "{{profile_id}}",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "user_id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/shortlist.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Add Block List",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "profile_id",
+                                                                                        "value":  "{{profile_id}}",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "status",
+                                                                                        "value":  "blocked",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "user_id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/add_block_list.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Show Blocked Profile",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "user_id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/show_Blocked_Profile.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Sent Interest",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "sender_id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/Sent_interest.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Received Interest",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "User_id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/Received_interest.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Update Interest Status",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "recipient_id",
+                                                                                        "value":  "{{recipient_id}}",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "status",
+                                                                                        "value":  "accepted",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/update_status.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Search Profiles",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "gender",
+                                                                                        "value":  "Female",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "religion",
+                                                                                        "value":  "Hindu",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "caste",
+                                                                                        "value":  "Maratha",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "marital_status",
+                                                                                        "value":  "Never Married",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "mother_tongue",
+                                                                                        "value":  "Marathi",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "age_from",
+                                                                                        "value":  "21",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "age_to",
+                                                                                        "value":  "30",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "height_from",
+                                                                                        "value":  "5.0",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "height_to",
+                                                                                        "value":  "6.0",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "country",
+                                                                                        "value":  "1",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "state",
+                                                                                        "value":  "1",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "city",
+                                                                                        "value":  "1",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "education",
+                                                                                        "value":  "Graduate",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "page",
+                                                                                        "value":  "1",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/search.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Search By Profile Id",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "id",
+                                                                                        "value":  "{{profile_id}}",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "page",
+                                                                                        "value":  "1",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/search.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Send Chat",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "recipient_id",
+                                                                                        "value":  "{{recipient_id}}",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "sender_id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/send-chat.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Send Contact",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "profile_id",
+                                                                                        "value":  "{{profile_id}}",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "sender_id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/send-contact.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "View Profile Update",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "profile_id",
+                                                                                        "value":  "{{profile_id}}",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "viewer_id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               },
+                                                      "url":  "{{base_url}}/{{api_path}}/view_profile.php"
+                                                  }
+                                  }
+                              ]
+                 },
+                 {
+                     "name":  "External OTPless",
+                     "item":  [
+                                  {
+                                      "name":  "Get OTPless User",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+                                                                     {
+                                                                         "key":  "clientId",
+                                                                         "value":  "5f02sso2"
+                                                                     },
+                                                                     {
+                                                                         "key":  "clientSecret",
+                                                                         "value":  "giekc535x6ghzkrh"
+                                                                     },
+                                                                     {
+                                                                         "key":  "Content-Type",
+                                                                         "value":  "application/json"
+                                                                     }
+                                                                 ],
+                                                      "body":  {
+                                                                   "mode":  "raw",
+                                                                   "raw":  "{\n  \"waId\": \"{{wa_id}}\"\n}",
+                                                                   "options":  {
+                                                                                   "raw":  {
+                                                                                               "language":  "json"
+                                                                                           }
+                                                                               }
+                                                               },
+                                                      "url":  "https://innovizia.authlink.me"
+                                                  }
+                                  }
+                              ]
+                 },
+                 {
+                     "name":  "Additional APIs (found in /apis)",
+                     "item":  [
+                                  {
+                                      "name":  "Aadhaar Verification Generate OTP",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{base_url}}/{{api_path}}/aadhaar-verification.php",
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "action",
+                                                                                        "value":  "generate-otp",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "aadhaar_number",
+                                                                                        "value":  "123456789012",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Aadhaar Verification Verify OTP",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{base_url}}/{{api_path}}/aadhaar-verification.php",
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "action",
+                                                                                        "value":  "verify-otp",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "client_id",
+                                                                                        "value":  "{{aadhaar_client_id}}",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "otp",
+                                                                                        "value":  "123456",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Age Group Search",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{base_url}}/{{api_path}}/age-group-search.php",
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "from_age",
+                                                                                        "value":  "21",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "to_age",
+                                                                                        "value":  "30",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "page",
+                                                                                        "value":  "1",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Best Matches",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{base_url}}/{{api_path}}/best-matches.php",
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "page",
+                                                                                        "value":  "1",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Get Horoscope",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{base_url}}/{{api_path}}/get-horoscope.php",
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Latest Registered Profiles",
+                                      "request":  {
+                                                      "method":  "GET",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{base_url}}/{{api_path}}/latest-registered-profiles.php"
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Near By List",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{base_url}}/{{api_path}}/near_by_list.php",
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "page",
+                                                                                        "value":  "1",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Legacy Profile Settings",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{base_url}}/{{api_path}}/profile_settings.php",
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "check_profile",
+                                                                                        "value":  "on",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "check_contact",
+                                                                                        "value":  "on",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "check_email",
+                                                                                        "value":  "on",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Same Education",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{base_url}}/{{api_path}}/same-education.php",
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "page",
+                                                                                        "value":  "1",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Same Occupation",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{base_url}}/{{api_path}}/same-occupation.php",
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "page",
+                                                                                        "value":  "1",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Update Password",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{base_url}}/{{api_path}}/update-password.php",
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "password",
+                                                                                        "value":  "123456",
+                                                                                        "type":  "text"
+                                                                                    }
+                                                                                ]
+                                                               }
+                                                  }
+                                  },
+                                  {
+                                      "name":  "Upload Horoscope",
+                                      "request":  {
+                                                      "method":  "POST",
+                                                      "header":  [
+
+                                                                 ],
+                                                      "url":  "{{base_url}}/{{api_path}}/upload-horoscope.php",
+                                                      "body":  {
+                                                                   "mode":  "formdata",
+                                                                   "formdata":  [
+                                                                                    {
+                                                                                        "key":  "id",
+                                                                                        "value":  "{{user_id}}",
+                                                                                        "type":  "text"
+                                                                                    },
+                                                                                    {
+                                                                                        "key":  "file",
+                                                                                        "type":  "file",
+                                                                                        "src":  ""
+                                                                                    }
+                                                                                ]
+                                                               }
+                                                  }
+                                  }
+                              ]
+                 }
+             ]
+}
