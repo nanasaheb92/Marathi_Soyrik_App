@@ -72,6 +72,7 @@ class ProfileDetails {
   String? contactVisibilibity;
   String? emailVisibilibity;
   String? createdDt;
+  String? roleId;
   PartnerPreferance? partnerPreferance;
 
   ProfileDetails(
@@ -148,6 +149,7 @@ class ProfileDetails {
       this.contactVisibilibity,
       this.emailVisibilibity,
       this.createdDt,
+      this.roleId,
       this.partnerPreferance});
 
   ProfileDetails.fromJson(Map<String, dynamic> json) {
@@ -224,6 +226,7 @@ class ProfileDetails {
     contactVisibilibity = json['contact_visibilibity'];
     emailVisibilibity = json['email_visibilibity'];
     createdDt = json['created_dt'];
+    roleId = json['role_id']?.toString();
     partnerPreferance = json['partner_preferance'] != null
         ? new PartnerPreferance.fromJson(json['partner_preferance'])
         : null;
@@ -304,6 +307,7 @@ class ProfileDetails {
     data['contact_visibilibity'] = this.contactVisibilibity;
     data['email_visibilibity'] = this.emailVisibilibity;
     data['created_dt'] = this.createdDt;
+    data['role_id'] = this.roleId;
     if (this.partnerPreferance != null) {
       data['partner_preferance'] = this.partnerPreferance!.toJson();
     }

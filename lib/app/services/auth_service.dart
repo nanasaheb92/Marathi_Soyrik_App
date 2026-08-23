@@ -74,5 +74,7 @@ class AuthService extends GetxService {
   // bool get isAuth => user.value.id != "";
   bool get isRegistering => isRegistered;
 
+  String? get currentUserRole => user.value.roleId;
+
   // String get apiToken => (user.value.auth ?? false) ? user.value.apiToken : '';
 }

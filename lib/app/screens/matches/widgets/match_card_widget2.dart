@@ -1,5 +1,3 @@
-import 'dart:convert';
-import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -13,9 +11,13 @@ import '../../../../common/color_pallete.dart';
 import '../../../components/ui/my_list_view.dart';
 import '../../../components/ui/rounded_container.dart';
 import '../../../components/ui/text_view.dart';
+import '../../../models/api_response.dart';
 import '../../../models/mathc_profile_model.dart';
+import '../../../models/profile_details_model.dart';
 import '../../../providers/api_endpoints.dart';
+import '../../../repositories/matches_repository.dart';
 import '../../../routes/app_routes.dart';
+import '../../../services/auth_service.dart';
 import '../controllers/match_controller.dart';
 
 class MatchCardWidget extends StatefulWidget {
@@ -168,40 +170,45 @@ class _MatchCardWidgetState extends State<MatchCardWidget> {
     });
 
     try {
-      print("Sharing profile data: ${widget.profile.toJson()}");
+      print("Fetching full profile for sharing: ${widget.profile.profileId}");
+
+      // Fetch full details
+      final response = await MatchesRepository().fetchProfileDetails({"id": widget.profile.profileId});
+
+      ProfileDetails? fullProfile;
+      if (response.status == Status.COMPLETED) {
+        fullProfile = response.data as ProfileDetails;
+      }
 
       String profileId = widget.profile.profileId ?? '';
-      String name = widget.profile.name ?? '';
+      String name = fullProfile?.name ?? widget.profile.name ?? '';
       String idDisplay = "$profileId-$name";
 
       final String shareText = '''
-▪️ 🤵 स्थळ : ${widget.profile.religion ?? 'N/A'}-${widget.profile.caste ?? 'N/A'}
+▪️ 🤵 स्थळ : ${fullProfile?.religion ?? widget.profile.religion ?? 'N/A'}-${fullProfile?.caste ?? widget.profile.caste ?? 'N/A'}
 ▪️ 🆔 : $idDisplay
-▪️ जन्म ता : ${widget.profile.dob ?? 'N/A'}
-▪️ जन्मवेळ : ${widget.profile.birthtime ?? 'N/A'}
-▪️ शिक्षण : ${widget.profile.education ?? 'N/A'}
-▪️ *व्यवसाय : ${widget.profile.occupation ?? 'N/A'}*
-▪️ वार्षिक उत्पन्न : ${widget.profile.annualIncome ?? 'N/A'}
-▪️ मुळगाव : ${widget.profile.birthplace ?? 'N/A'}
-▪️ सध्या : ${widget.profile.location ?? 'N/A'}
-▪️ स्थावर : ${widget.profile.assets ?? 'N/A'}
-▪️ अपेक्षा : ${widget.profile.expectations ?? 'N/A'}
+▪️ जन्म ता : ${fullProfile?.dob ?? widget.profile.dob ?? 'N/A'}
+▪️ जन्मवेळ : ${fullProfile?.birthtime ?? 'N/A'}
+▪️ शिक्षण : ${fullProfile?.education ?? 'N/A'}
+▪️ *व्यवसाय : ${fullProfile?.occupation ?? 'N/A'}*
+▪️ वार्षिक उत्पन्न : ${fullProfile?.annualIncome ?? 'N/A'}
+▪️ मुळगाव : ${fullProfile?.birthplace ?? 'N/A'}
+▪️ सध्या : ${fullProfile?.location ?? widget.profile.location ?? 'N/A'}
+▪️ स्थावर : ${fullProfile?.residance ?? 'N/A'}
+▪️ अपेक्षा : ${fullProfile?.partnerPreferance?.generalExpt ?? 'N/A'}
 ▪️ अधिक माहितीसाठी खालील लिंक वर टच करून पहावे👇        
 https://www.marathisoyrik.in/viewFullProfile.php?id=$profileId
 
 🚩🚩🚩🚩🚩🚩🚩🚩🚩🚩
 संपर्क:
 अहिल्यानगर (अ.नगर)
-वैष्णवी कॉम्प्लेक्स, जगदंबा क्लॉथ समोर, भिस्तबाग चौक, पाईपलाईन रोड,
-अहिल्यानगर (अ.नगर) - ४१४००१, महाराष्ट्र. 📞 7447785910 / 8847724680
+वैष्णवी कॉम्प्लेक्स, जगदंबा क्लॉथ समोर, भिस्तबाग चौक, पाईपलाईन रोड, अहिल्यानगर (अ.नगर) - ४१४००१, महाराष्ट्र. 📞 7447785910 / 8847724680
 
 पुणे
-कान्हूर पठार पतसंस्थेच्या वर, पुणे-नगर हायवे टच,
-चंदननगर, पुणे. 📞 7020281282
+कान्हूर पठार पतसंस्थेच्या वर, पुणे-नगर हायवे टच, चंदननगर, पुणे. 📞 7020281282
 
 नाशिक
-शॉप नंबर 157, दुसरा मजला स्टार प्लस बिल्डिंग,
-मुक्तिधाम गार्डनच्या जवळ, नाशिक रोड, नाशिक. 📞 8453902222
+शॉप नंबर 157, दुसरा मजला स्टार प्लस बिल्डिंग, मुक्तिधाम गार्डनच्या जवळ, नाशिक रोड, नाशिक. 📞 8453902222
 
 🚩🚩🚩🚩🚩🚩🚩🚩🚩🚩
 श्री व सौ वधू वर सूचक केंद्र
@@ -348,10 +355,11 @@ https://www.marathisoyrik.in/viewFullProfile.php?id=$profileId
                     },
                     child: _getBottomItem("Message", Icons.chat, chatLoading),
                   ),
-                  InkWell(
-                    onTap: _shareProfile,
-                    child: _getBottomItem("Share", Icons.share, shareLoading),
-                  ),
+                  if (Get.find<AuthService>().currentUserRole == "1")
+                    InkWell(
+                      onTap: _shareProfile,
+                      child: _getBottomItem("Share", Icons.share, shareLoading),
+                    ),
                   InkWell(
                     onTap: () async {
                       if (widget.addToShortlist != null) {

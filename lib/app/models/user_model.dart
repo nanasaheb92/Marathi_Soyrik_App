@@ -12,6 +12,7 @@ class User {
   String? caste;
   String? token;
   String? profileImg;
+  String? roleId;
 
   User(
       {this.email,
@@ -23,7 +24,8 @@ class User {
       this.gender,
       this.maritalStatus,
       this.religion,
-      this.caste});
+      this.caste,
+      this.roleId});
 
   User.fromJson(Map<String, dynamic> json) {
     userId = json['user_id'] ?? json["id"];
@@ -39,6 +41,7 @@ class User {
     caste = json['caste'];
     token = json["token"];
     profileImg = json["photo1"];
+    roleId = json["role_id"]?.toString();
   }
 
   Map<String, dynamic> toJson() {
@@ -53,6 +56,7 @@ class User {
     data['marital-status'] = maritalStatus;
     data['religion'] = religion;
     data['caste'] = caste;
+    data['role_id'] = roleId;
     return data;
   }
 }
