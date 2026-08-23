@@ -5,6 +5,7 @@ import '../models/interest_model.dart';
 import '../models/mathc_profile_model.dart';
 import '../models/profile_details_model.dart';
 import '../models/search_model.dart';
+import '../providers/api_endpoints.dart';
 import '../providers/api_provider.dart';
 import 'package:dio/dio.dart' as dio;
 
@@ -39,6 +40,7 @@ class MatchesRepository {
   Future<ApiResponse> fetchMatchedProfiles(int page) async {
     var body = dio.FormData.fromMap(
         {"id": Get.find<AuthService>().token!, "page": page});
+
     return await apiProvider
         .makeAPICall("POST", "matches.php", body)
         .then((value) {

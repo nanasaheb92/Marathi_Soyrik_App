@@ -1,7 +1,7 @@
 class Urls {
   // static const baseUrl = "https://smylebank-api.vercel.app/";
   //static const baseUrl = "https://blesslagna.com/";
-  static const baseUrl = "https://ms.kothulefarm.com/";
+  static const baseUrl = "https://www.marathisoyrik.in/";
   static const apiPath = "apis/";
   static const imagePath = "storage/";
   static const login = "login";

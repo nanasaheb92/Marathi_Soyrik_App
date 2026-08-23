@@ -24,7 +24,7 @@ subprojects {
     }
 }
 
-subprojects { afterEvaluate { android { compileSdkVersion 36 } } }
+subprojects { afterEvaluate { android { compileSdkVersion 35 } } }
 subprojects {
     project.evaluationDependsOn(':app')
 }

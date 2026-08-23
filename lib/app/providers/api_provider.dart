@@ -41,6 +41,10 @@ class ApiProvider extends GetxService with ApiClient {
     }
   }
 
+  Map<String, dynamic> get getHeaders {
+    return _httpClient.options.headers;
+  }
+
   Future<String> uploadFile(File file) async {
     dio.FormData data = dio.FormData.fromMap({
       "file": await dio.MultipartFile.fromFile(file.path, filename: file.path)
@@ -76,17 +80,22 @@ class ApiProvider extends GetxService with ApiClient {
 
   Future<ApiResponse> makeAPICall(method, endpoint, data) async {
     var url = Uri.parse(Urls.getApiUrl(endpoint));
-    // var token = authService.token ?? "";
-    // _httpClient.options.headers.addAll({"Authorization": "Bearer $token"});
 
-    // (data as dio.FormData).fields.add(MapEntry("user_id", token));
-    // (data as dio.FormData).fields.add(MapEntry("id", token));
+    if (kDebugMode) {
+      print("--- API Request Log ---");
+      print("Method: $method");
+      print("URL: $url");
+      print("Headers: ${_httpClient.options.headers}");
+      if (data is dio.FormData) {
+        print("Body (FormData): ${data.fields.map((e) => "${e.key}: ${e.value}").toList()}");
+      } else {
+        print("Body: $data");
+      }
+      print("-----------------------");
+    }
 
     try {
       var result;
-      if (kDebugMode) {
-        log(url.toString());
-      }
       switch (method) {
         case "GET":
           result = await _httpClient.get(url.path, queryParameters: data);
@@ -106,7 +115,10 @@ class ApiProvider extends GetxService with ApiClient {
       if (result != null) {
         var response = result.data;
         if (kDebugMode) {
-          // log(result.data.toString());
+          print("--- API Response Log ---");
+          print("Endpoint: $endpoint");
+          print("Response: $response");
+          print("------------------------");
         }
         if (response["status"]) {
           return ApiResponse.completed(result.data);
@@ -116,8 +128,8 @@ class ApiProvider extends GetxService with ApiClient {
       } else {
         return ApiResponse.error("Page Not Found", Error.INVALID_ROUTE);
       }
-    } on dio.DioError catch (ex) {
-      if (ex.type == DioExceptionType.connectionTimeout) {
+    } on dio.DioException catch (ex) {
+      if (ex.type == dio.DioExceptionType.connectionTimeout) {
         return ApiResponse.error("Connection Timeout", Error.TIME_OUT_ERROR);
       }
       if (ex.response != null) {

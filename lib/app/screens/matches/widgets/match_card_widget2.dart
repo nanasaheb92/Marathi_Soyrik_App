@@ -1,7 +1,12 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../common/color_pallete.dart';
@@ -24,13 +29,13 @@ class MatchCardWidget extends StatefulWidget {
 
   const MatchCardWidget(
       {super.key,
-      required this.profile,
-      this.sendInterest,
-      this.addToShortlist,
-      this.view,
-      this.status,
-      this.unblockProfile,
-      this.updateInterestStatus});
+        required this.profile,
+        this.sendInterest,
+        this.addToShortlist,
+        this.view,
+        this.status,
+        this.unblockProfile,
+        this.updateInterestStatus});
 
   @override
   State<MatchCardWidget> createState() => _MatchCardWidgetState();
@@ -42,12 +47,13 @@ class _MatchCardWidgetState extends State<MatchCardWidget> {
   bool contactLoading = false;
   bool chatLoading = false;
   bool shortListLoading = false;
+  bool shareLoading = false;
 
   @override
   Widget build(BuildContext context) {
     double fem = 1;
     return Padding(
-      padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 50.0),
+      padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 50.0),
       child: InkWell(
         onTap: () async {
           Get.find<MatchController>()
@@ -81,7 +87,7 @@ class _MatchCardWidgetState extends State<MatchCardWidget> {
                         );
                       },
                       width: double.infinity,
-                      alignment: Alignment.topCenter, // Aligns the image to the top
+                      alignment: Alignment.topCenter,
                       fit: BoxFit.cover,
                       errorWidget: (context, url, error) {
                         return RoundedContainer(
@@ -156,32 +162,83 @@ class _MatchCardWidgetState extends State<MatchCardWidget> {
     );
   }
 
-  _getChatGPTBottom() {
-    return const Row(
-      mainAxisAlignment: MainAxisAlignment.spaceAround,
-      children: [
-        CircleAvatar(
-          radius: 20,
-          backgroundColor: ColorPallete.primary,
-          child: Icon(Icons.home, color: Colors.white),
-        ),
-        CircleAvatar(
-          radius: 20,
-          backgroundColor: ColorPallete.primary,
-          child: Icon(Icons.search, color: Colors.white),
-        ),
-        CircleAvatar(
-          radius: 20,
-          backgroundColor: ColorPallete.primary,
-          child: Icon(Icons.notifications, color: Colors.white),
-        ),
-        CircleAvatar(
-          radius: 20,
-          backgroundColor: ColorPallete.primary,
-          child: Icon(Icons.person, color: Colors.white),
-        ),
-      ],
-    );
+  Future<void> _shareProfile() async {
+    setState(() {
+      shareLoading = true;
+    });
+
+    try {
+      print("Sharing profile data: ${widget.profile.toJson()}");
+
+      String profileId = widget.profile.profileId ?? '';
+      String name = widget.profile.name ?? '';
+      String idDisplay = "$profileId-$name";
+
+      final String shareText = '''
+▪️ 🤵 स्थळ : ${widget.profile.religion ?? 'N/A'}-${widget.profile.caste ?? 'N/A'}
+▪️ 🆔 : $idDisplay
+▪️ जन्म ता : ${widget.profile.dob ?? 'N/A'}
+▪️ जन्मवेळ : ${widget.profile.birthtime ?? 'N/A'}
+▪️ शिक्षण : ${widget.profile.education ?? 'N/A'}
+▪️ *व्यवसाय : ${widget.profile.occupation ?? 'N/A'}*
+▪️ वार्षिक उत्पन्न : ${widget.profile.annualIncome ?? 'N/A'}
+▪️ मुळगाव : ${widget.profile.birthplace ?? 'N/A'}
+▪️ सध्या : ${widget.profile.location ?? 'N/A'}
+▪️ स्थावर : ${widget.profile.assets ?? 'N/A'}
+▪️ अपेक्षा : ${widget.profile.expectations ?? 'N/A'}
+▪️ अधिक माहितीसाठी खालील लिंक वर टच करून पहावे👇        
+https://www.marathisoyrik.in/viewFullProfile.php?id=$profileId
+
+🚩🚩🚩🚩🚩🚩🚩🚩🚩🚩
+संपर्क:
+अहिल्यानगर (अ.नगर)
+वैष्णवी कॉम्प्लेक्स, जगदंबा क्लॉथ समोर, भिस्तबाग चौक, पाईपलाईन रोड,
+अहिल्यानगर (अ.नगर) - ४१४००१, महाराष्ट्र. 📞 7447785910 / 8847724680
+
+पुणे
+कान्हूर पठार पतसंस्थेच्या वर, पुणे-नगर हायवे टच,
+चंदननगर, पुणे. 📞 7020281282
+
+नाशिक
+शॉप नंबर 157, दुसरा मजला स्टार प्लस बिल्डिंग,
+मुक्तिधाम गार्डनच्या जवळ, नाशिक रोड, नाशिक. 📞 8453902222
+
+🚩🚩🚩🚩🚩🚩🚩🚩🚩🚩
+श्री व सौ वधू वर सूचक केंद्र
+📱वेळ स. 9.00 ते सायं. 8.00  
+🚩👫🚩👫🚩👫🚩👫🚩
+''';
+
+      final imageUrl = (widget.profile.photo1 ?? "").isNotEmpty
+          ? Urls.getImageUrl(widget.profile.photo1!)
+          : null;
+
+      if (imageUrl != null && imageUrl.isNotEmpty) {
+        final tempDir = await getTemporaryDirectory();
+        final filePath = '${tempDir.path}/profile_${widget.profile.profileId ?? 'card'}.jpg';
+
+        await Dio().download(imageUrl, filePath);
+
+        await Share.shareXFiles(
+          [XFile(filePath)],
+          text: shareText,
+        );
+      } else {
+        await Share.share(shareText);
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Unable to share profile right now',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+      );
+    } finally {
+      setState(() {
+        shareLoading = false;
+      });
+    }
   }
 
   _getDataEntry(String title, String? value) {
@@ -220,137 +277,145 @@ class _MatchCardWidgetState extends State<MatchCardWidget> {
 
   _getDefaultMatchCardBottom(String? number) {
     return Padding(
-      padding: EdgeInsets.all(10.0),
+      padding: const EdgeInsets.all(10.0),
       child: Row(
         children: [
           Expanded(
-              child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                InkWell(
-                  onTap: () {
-
-                    if (number != null && number != "NA") {
-
-                      contactLoading = true;
-                      setState(() {});
-                      Get.find<MatchController>()
-                          .contactProfile(widget.profile, context)
-                          .then((value) {
-                        setState(() {
-                          contactLoading = false;
-                        });
-                        if (value) {
-                          final Uri telLaunchUri = Uri(
-                            scheme: 'tel',
-                            path: number,
-                          );
-                          launchUrl(telLaunchUri);
-                        }
-                      });
-
-                    } else {
-                      Get.snackbar(
-                        'NA',                     // Title of the snackbar
-                        'Number not available',  // Message of the snackbar
-                        snackPosition: SnackPosition.BOTTOM,  // Position of the snackbar
-                        backgroundColor: Colors.blueAccent,  // Background color
-                        colorText: Colors.white,     // Text color
-                        icon: Icon(Icons.info, color: Colors.white),  // Optional icon
-                        duration: Duration(seconds: 3),  // Duration to display the snackbar
-                      );
-                    }
-
-                  },
-                  child: _getBottomItem("Call", Icons.call),
-                ),
-                InkWell(
-                  onTap: () async {
-
-                    if (number != null && number != "NA") {
-
-                      chatLoading = true;
-                      setState(() {});
-                      Get.find<MatchController>()
-                          .chatProfile(widget.profile, context)
-                          .then((value) {
-                        setState(() {
-                          chatLoading = false;
-                        });
-                        if (value) {
-                          _launchWhatsapp(context, number);
-                        }
-                      });
-
-                    } else {
-                      Get.snackbar(
-                        'NA',                     // Title of the snackbar
-                        'Number not available',  // Message of the snackbar
-                        snackPosition: SnackPosition.BOTTOM,  // Position of the snackbar
-                        backgroundColor: Colors.blueAccent,  // Background color
-                        colorText: Colors.white,     // Text color
-                        icon: Icon(Icons.info, color: Colors.white),  // Optional icon
-                        duration: Duration(seconds: 3),  // Duration to display the snackbar
-                      );
-                    }
-
-                  },
-                  child: _getBottomItem("Message", Icons.chat),
-                ),
-                InkWell(
-                  onTap: () async {
-                    if (widget.addToShortlist != null) {
-                      setState(() {
-                        shortListLoading = true;
-                      });
-                      widget.addToShortlist!().then((value) {
-                        setState(() {
-                          shortListLoading = false;
-                        });
-                      });
-                    }
-                  },
-                  child: _getBottomItem("Shortlist", Icons.star),
-                ),
-                InkWell(
-                  onTap: () async {
-                    if (widget.sendInterest != null) {
-                      loading = true;
-                      setState(() {});
-                      widget.sendInterest!().then((value) {
-                        loading = false;
-                        if (value) {
-                          interestSent = !interestSent;
-                        }
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  InkWell(
+                    onTap: () {
+                      if (number != null && number != "NA") {
+                        contactLoading = true;
                         setState(() {});
-                      });
-                    }
-                  },
-                  child: _getBottomItem("Interest", Icons.check_circle),
-                ),
-              ],
+                        Get.find<MatchController>()
+                            .contactProfile(widget.profile, context)
+                            .then((value) {
+                          setState(() {
+                            contactLoading = false;
+                          });
+                          if (value) {
+                            final Uri telLaunchUri = Uri(
+                              scheme: 'tel',
+                              path: number,
+                            );
+                            launchUrl(telLaunchUri);
+                          }
+                        });
+                      } else {
+                        Get.snackbar(
+                          'NA',
+                          'Number not available',
+                          snackPosition: SnackPosition.BOTTOM,
+                          backgroundColor: Colors.blueAccent,
+                          colorText: Colors.white,
+                          icon: const Icon(Icons.info, color: Colors.white),
+                          duration: const Duration(seconds: 3),
+                        );
+                      }
+                    },
+                    child: _getBottomItem("Call", Icons.call, contactLoading),
+                  ),
+                  InkWell(
+                    onTap: () async {
+                      if (number != null && number != "NA") {
+                        chatLoading = true;
+                        setState(() {});
+                        Get.find<MatchController>()
+                            .chatProfile(widget.profile, context)
+                            .then((value) {
+                          setState(() {
+                            chatLoading = false;
+                          });
+                          if (value) {
+                            _launchWhatsapp(context, number);
+                          }
+                        });
+                      } else {
+                        Get.snackbar(
+                          'NA',
+                          'Number not available',
+                          snackPosition: SnackPosition.BOTTOM,
+                          backgroundColor: Colors.blueAccent,
+                          colorText: Colors.white,
+                          icon: const Icon(Icons.info, color: Colors.white),
+                          duration: const Duration(seconds: 3),
+                        );
+                      }
+                    },
+                    child: _getBottomItem("Message", Icons.chat, chatLoading),
+                  ),
+                  InkWell(
+                    onTap: _shareProfile,
+                    child: _getBottomItem("Share", Icons.share, shareLoading),
+                  ),
+                  InkWell(
+                    onTap: () async {
+                      if (widget.addToShortlist != null) {
+                        setState(() {
+                          shortListLoading = true;
+                        });
+                        widget.addToShortlist!().then((value) {
+                          setState(() {
+                            shortListLoading = false;
+                          });
+                        });
+                      }
+                    },
+                    child: _getBottomItem("Shortlist", Icons.star, shortListLoading),
+                  ),
+                  InkWell(
+                    onTap: () async {
+                      if (widget.sendInterest != null) {
+                        loading = true;
+                        setState(() {});
+                        widget.sendInterest!().then((value) {
+                          loading = false;
+                          if (value) {
+                            interestSent = !interestSent;
+                          }
+                          setState(() {});
+                        });
+                      }
+                    },
+                    child: _getBottomItem(
+                        interestSent ? "Sent" : "Interest",
+                        Icons.check_circle,
+                        loading),
+                  ),
+                ],
+              ),
             ),
-          )),
+          ),
         ],
       ),
     );
   }
 
-  _getBottomItem(String text, IconData iconData) {
+  _getBottomItem(String text, IconData iconData, [bool isLoading = false]) {
     return Column(
       children: [
         CircleAvatar(
           backgroundColor: ColorPallete.primary,
-          radius: 25,
-          child: Icon(
+          radius: 22,
+          child: isLoading
+              ? const Padding(
+            padding: EdgeInsets.all(6.0),
+            child: CircularProgressIndicator(
+              color: ColorPallete.theme,
+              strokeWidth: 2,
+            ),
+          )
+              : Icon(
             iconData,
             color: ColorPallete.theme,
-            size: 25,
+            size: 20,
           ),
         ),
-        SizedBox(
+        const SizedBox(
           height: 5.0,
         ),
         TextView(
@@ -374,382 +439,5 @@ class _MatchCardWidgetState extends State<MatchCardWidget> {
         ),
       );
     }
-  }
-
-  _getDefaultMatchCardBotom(double fem, String? number) {
-    return Padding(
-      padding: EdgeInsets.all(10.0 * fem),
-      child: Row(
-        children: [
-          Expanded(
-              child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10 * fem),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                InkWell(
-                  onTap: () {
-                    if (number != null && number != "NA") {
-                      contactLoading = true;
-                      setState(() {});
-                      Get.find<MatchController>()
-                          .contactProfile(widget.profile, context)
-                          .then((value) {
-                        setState(() {
-                          contactLoading = false;
-                        });
-                        if (value) {
-                          final Uri telLaunchUri = Uri(
-                            scheme: 'tel',
-                            path: number,
-                          );
-                          launchUrl(telLaunchUri);
-                        }
-                      });
-                    } else {
-                      Get.snackbar(
-                        'NA', // Title of the snackbar
-                        'Number not available', // Message of the snackbar
-                        snackPosition: SnackPosition.BOTTOM,
-                        // Position of the snackbar
-                        backgroundColor: Colors.blueAccent,
-                        // Background color
-                        colorText: Colors.white,
-                        // Text color
-                        icon: Icon(Icons.info, color: Colors.white),
-                        // Optional icon
-                        duration: Duration(
-                            seconds: 3), // Duration to display the snackbar
-                      );
-                    }
-                  },
-                  child: CircleAvatar(
-                    backgroundColor: ColorPallete.primary,
-                    radius: 20,
-                    child: contactLoading
-                        ? Padding(
-                            padding: EdgeInsets.all(5 * fem),
-                            child: const CircularProgressIndicator(
-                              color: ColorPallete.theme,
-                            ),
-                          )
-                        : Icon(
-                            Icons.call,
-                            color: ColorPallete.theme,
-                            size: 20 * fem,
-                          ),
-                  ),
-                ),
-                InkWell(
-                  onTap: () async {
-                    if (number != null && number != "NA") {
-                      chatLoading = true;
-                      setState(() {});
-                      Get.find<MatchController>()
-                          .chatProfile(widget.profile, context)
-                          .then((value) {
-                        setState(() {
-                          chatLoading = false;
-                        });
-                        if (value) {
-                          _launchWhatsapp(context, number);
-                        }
-                      });
-                    } else {
-                      Get.snackbar(
-                        'NA', // Title of the snackbar
-                        'Number not available', // Message of the snackbar
-                        snackPosition: SnackPosition.BOTTOM,
-                        // Position of the snackbar
-                        backgroundColor: Colors.blueAccent,
-                        // Background color
-                        colorText: Colors.white,
-                        // Text color
-                        icon: Icon(Icons.info, color: Colors.white),
-                        // Optional icon
-                        duration: Duration(
-                            seconds: 3), // Duration to display the snackbar
-                      );
-                    }
-                  },
-                  child: CircleAvatar(
-                    backgroundColor: ColorPallete.primary,
-                    radius: 20,
-                    child: chatLoading
-                        ? Padding(
-                            padding: EdgeInsets.all(5 * fem),
-                            child: const CircularProgressIndicator(
-                              color: ColorPallete.theme,
-                            ),
-                          )
-                        : Icon(
-                            Icons.chat,
-                            color: ColorPallete.theme,
-                            size: 20 * fem,
-                          ),
-                  ),
-                ),
-                InkWell(
-                  onTap: () async {
-                    if (widget.addToShortlist != null) {
-                      setState(() {
-                        shortListLoading = true;
-                      });
-                      widget.addToShortlist!().then((value) {
-                        setState(() {
-                          shortListLoading = false;
-                        });
-                      });
-                    }
-                  },
-                  child: CircleAvatar(
-                    backgroundColor: ColorPallete.primary,
-                    radius: 20,
-                    child: shortListLoading
-                        ? Padding(
-                            padding: EdgeInsets.all(5 * fem),
-                            child: const CircularProgressIndicator(
-                              color: ColorPallete.theme,
-                            ),
-                          )
-                        : Icon(
-                            widget.addToShortlist == null
-                                ? Icons.star
-                                : Icons.star_outline,
-                            color: ColorPallete.theme,
-                            size: 25 * fem,
-                          ),
-                  ),
-                ),
-              ],
-            ),
-          )),
-          Expanded(
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                InkWell(
-                  onTap: () {
-                    if (widget.sendInterest != null) {
-                      loading = true;
-                      setState(() {});
-                      widget.sendInterest!().then((value) {
-                        loading = false;
-                        if (value) {
-                          interestSent = !interestSent;
-                        }
-                        setState(() {});
-                      });
-                    }
-                  },
-                  child: RoundedContainer(
-                    radius: 20,
-                    color: ColorPallete.primary,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 20 * fem, vertical: 10.0 * fem),
-                      child: Center(
-                        child: Row(
-                          children: [
-                            const Icon(
-                              Icons.favorite,
-                              color: ColorPallete.theme,
-                              size: 20,
-                            ),
-                            SizedBox(
-                              width: 5 * fem,
-                            ),
-                            TextView(
-                              text: loading
-                                  ? "Updating .."
-                                  : interestSent
-                                      ? "Interest Sent"
-                                      : "Send Interest",
-                              color: ColorPallete.theme,
-                              fontSize: 14,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                )
-              ],
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  _sentInterestBottom(double fem) {
-    return Container(
-      color: widget.status == "Pending"
-          ? Colors.amber
-          : widget.status == "Rejected"
-              ? ColorPallete.red
-              : Colors.green,
-      child: Padding(
-        padding: EdgeInsets.all(10.0 * fem),
-        child: Row(
-          children: [
-            Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  RoundedContainer(
-                    radius: 20,
-                    color: widget.status == "Pending"
-                        ? Colors.amber
-                        : widget.status == "Rejected"
-                            ? ColorPallete.red
-                            : Colors.green,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: 20 * fem, vertical: 10.0 * fem),
-                      child: Center(
-                        child: Row(
-                          children: [
-                            Icon(
-                              widget.status == "Pending"
-                                  ? Icons.pending
-                                  : widget.status == "Rejected"
-                                      ? Icons.close
-                                      : Icons.check,
-                              color: ColorPallete.theme,
-                              size: 20,
-                            ),
-                            SizedBox(
-                              width: 5 * fem,
-                            ),
-                            TextView(
-                              text: widget.status!,
-                              color: ColorPallete.theme,
-                              fontSize: 14,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            )
-          ],
-        ),
-      ),
-    );
-  }
-
-  _receivedInterestBottom(double fem) {
-    return Padding(
-      padding: EdgeInsets.all(10.0 * fem),
-      child: Row(
-        children: [
-          loading
-              ? const Expanded(
-                  child: Center(
-                  child: CircularProgressIndicator(
-                    color: ColorPallete.primary,
-                  ),
-                ))
-              : Expanded(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      InkWell(
-                        onTap: () {
-                          if (widget.updateInterestStatus != null) {
-                            loading = true;
-                            setState(() {});
-                            widget.updateInterestStatus!("Rejected")
-                                .then((value) {
-                              loading = false;
-                              if (value) {
-                                interestSent = !interestSent;
-                              }
-                              setState(() {});
-                            });
-                          }
-                        },
-                        child: RoundedContainer(
-                          radius: 20,
-                          color: ColorPallete.red,
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 30 * fem, vertical: 10.0 * fem),
-                            child: Center(
-                              child: Row(
-                                children: [
-                                  const Icon(
-                                    Icons.close,
-                                    color: ColorPallete.theme,
-                                    size: 20,
-                                  ),
-                                  SizedBox(
-                                    width: 5 * fem,
-                                  ),
-                                  const TextView(
-                                    text: "Reject",
-                                    color: ColorPallete.theme,
-                                    weight: FontWeight.bold,
-                                    fontSize: 14,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      InkWell(
-                        onTap: () {
-                          if (widget.updateInterestStatus != null) {
-                            loading = true;
-                            setState(() {});
-                            widget.updateInterestStatus!("Accepted")
-                                .then((value) {
-                              loading = false;
-                              if (value) {
-                                interestSent = !interestSent;
-                              }
-                              setState(() {});
-                            });
-                          }
-                        },
-                        child: RoundedContainer(
-                          radius: 20,
-                          color: Colors.green,
-                          child: Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 30 * fem, vertical: 10.0 * fem),
-                            child: Center(
-                              child: Row(
-                                children: [
-                                  const Icon(
-                                    Icons.check,
-                                    color: ColorPallete.theme,
-                                    size: 20,
-                                  ),
-                                  SizedBox(
-                                    width: 5 * fem,
-                                  ),
-                                  const TextView(
-                                    text: "Accept",
-                                    color: ColorPallete.theme,
-                                    weight: FontWeight.bold,
-                                    fontSize: 14,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-                )
-        ],
-      ),
-    );
   }
 }

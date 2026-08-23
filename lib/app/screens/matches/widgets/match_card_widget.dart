@@ -1,7 +1,12 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../common/color_pallete.dart';
@@ -41,6 +46,87 @@ class _MatchCardWidgetState extends State<MatchCardWidget> {
   bool contactLoading = false;
   bool chatLoading = false;
   bool shortListLoading = false;
+  bool shareLoading = false;
+
+  Future<void> _shareProfile() async {
+    setState(() {
+      shareLoading = true;
+    });
+
+    try {
+      print("Sharing profile data: ${widget.profile.toJson()}");
+
+      String profileId = widget.profile.profileId ?? '';
+      String name = widget.profile.name ?? '';
+      String idDisplay = "$profileId-$name";
+
+      final String shareText = '''
+▪️ 🤵 स्थळ : ${widget.profile.religion ?? 'N/A'}-${widget.profile.caste ?? 'N/A'}
+▪️ 🆔 : $idDisplay
+▪️ जन्म ता : ${widget.profile.dob ?? 'N/A'}
+▪️ जन्मवेळ : ${widget.profile.birthtime ?? 'N/A'}
+▪️ शिक्षण : ${widget.profile.education ?? 'N/A'}
+▪️ *व्यवसाय : ${widget.profile.occupation ?? 'N/A'}*
+▪️ वार्षिक उत्पन्न : ${widget.profile.annualIncome ?? 'N/A'}
+▪️ मुळगाव : ${widget.profile.birthplace ?? 'N/A'}
+▪️ सध्या : ${widget.profile.location ?? 'N/A'}
+▪️ स्थावर : ${widget.profile.assets ?? 'N/A'}
+▪️ अपेक्षा : ${widget.profile.expectations ?? 'N/A'}
+▪️ अधिक माहितीसाठी खालील लिंक वर टच करून पहावे👇        
+https://www.marathisoyrik.in/viewFullProfile.php?id=$profileId
+
+🚩🚩🚩🚩🚩🚩🚩🚩🚩🚩
+संपर्क:
+अहिल्यानगर (अ.नगर)
+वैष्णवी कॉम्प्लेक्स, जगदंबा क्लॉथ समोर, भिस्तबाग चौक, पाईपलाईन रोड, अहिल्यानगर (अ.नगर) - ४१४००१, महाराष्ट्र. 
+📞 7447785910 / 8847724680
+
+पुणे
+कान्हूर पठार पतसंस्थेच्या वर, पुणे-नगर हायवे टच, चंदननगर, पुणे. 
+📞 7020281282
+
+नाशिक
+शॉप नंबर 157, दुसरा मजला स्टार प्लस बिल्डिंग, मुक्तिधाम गार्डनच्या जवळ, नाशिक रोड, नाशिक. 
+📞 8453902222
+
+🚩🚩🚩🚩🚩🚩🚩🚩🚩🚩
+श्री व सौ वधू वर सूचक केंद्र
+📱वेळ स. 9.00 ते सायं. 8.00  
+🚩👫🚩👫🚩👫🚩👫🚩
+''';
+
+      final imageUrl = (widget.profile.photo1 ?? "").isNotEmpty
+          ? Urls.getImageUrl(widget.profile.photo1!)
+          : null;
+
+      if (imageUrl != null && imageUrl.isNotEmpty) {
+        final tempDir = await getTemporaryDirectory();
+        final filePath = '${tempDir.path}/profile_${widget.profile.profileId ?? 'card'}.jpg';
+
+        await Dio().download(imageUrl, filePath);
+
+        await Share.shareXFiles(
+          [XFile(filePath)],
+          text: shareText,
+        );
+      } else {
+        await Share.share(shareText);
+      }
+    } catch (e) {
+      Get.snackbar(
+        'Error',
+        'Unable to share profile right now',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.redAccent,
+        colorText: Colors.white,
+      );
+    } finally {
+      setState(() {
+        shareLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double baseWidth = 360;
@@ -144,15 +230,17 @@ class _MatchCardWidgetState extends State<MatchCardWidget> {
                                 // _getDataEntry("Occupation", "XYZ"),
                                 // _getDataEntry("Education", "MNO"),
                                 // _getDataEntry("Income", "PQR"),
-                                _getDataEntry(
-                                    "Profile Id", widget.profile.profileId),
-                                _getDataEntry("Age & Height",
-                                    "${((widget.profile.dob ?? "") == "" ? 1 : DateTime.now().difference(DateFormat("yyyy-MM-dd").parse(widget.profile.dob ?? "")).inDays / 365).toStringAsFixed(0)} | ${widget.profile.height} ft"),
-                                _getDataEntry(
-                                    "Religion", widget.profile.religion),
-                                _getDataEntry("Caste", widget.profile.caste),
-                                _getDataEntry(
-                                    "Location", widget.profile.location),
+                                _getDataEntry("Profile Id", widget.profile.profileId),
+                                _getDataEntry("स्थळ", "${widget.profile.religion ?? ''} - ${widget.profile.caste ?? ''}"),
+                                _getDataEntry("जन्म ता", widget.profile.dob),
+                                _getDataEntry("जन्म वेळ", widget.profile.birthtime),
+                                _getDataEntry("शिक्षण", widget.profile.education),
+                                _getDataEntry("नोकरी", widget.profile.occupation),
+                                _getDataEntry("वार्षिक पॅकेज", widget.profile.annualIncome),
+                                _getDataEntry("सध्या", widget.profile.location),
+                                _getDataEntry("मुळगाव", widget.profile.birthplace),
+                                _getDataEntry("स्थावर", widget.profile.assets),
+                                _getDataEntry("अपेक्षा", widget.profile.expectations),
                               ],
                             ),
                           ),
@@ -353,6 +441,25 @@ class _MatchCardWidgetState extends State<MatchCardWidget> {
                             color: ColorPallete.theme,
                             size: 20 * fem,
                           ),
+                  ),
+                ),
+                InkWell(
+                  onTap: _shareProfile,
+                  child: CircleAvatar(
+                    backgroundColor: ColorPallete.primary,
+                    radius: 20,
+                    child: shareLoading
+                        ? Padding(
+                      padding: EdgeInsets.all(5 * fem),
+                      child: const CircularProgressIndicator(
+                        color: ColorPallete.theme,
+                      ),
+                    )
+                        : Icon(
+                      Icons.share,
+                      color: ColorPallete.theme,
+                      size: 20 * fem,
+                    ),
                   ),
                 ),
                 InkWell(

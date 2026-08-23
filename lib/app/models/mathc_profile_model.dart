@@ -12,6 +12,14 @@ class MatchProfile {
   String? photo4;
   String? phone;
   String? mobile;
+  String? birthtime;
+  String? birthplace;
+  String? education;
+  String? occupation;
+  String? annualIncome;
+  String? subcaste;
+  String? expectations;
+  String? assets;
 
   MatchProfile(
       {this.profileId,
@@ -26,7 +34,15 @@ class MatchProfile {
       this.photo3,
       this.photo4,
       this.phone,
-      this.mobile});
+      this.mobile,
+      this.birthtime,
+      this.birthplace,
+      this.education,
+      this.occupation,
+      this.annualIncome,
+      this.subcaste,
+      this.expectations,
+      this.assets});
 
   MatchProfile.fromJson(Map<String, dynamic> json) {
     profileId = json['profile_id'] ?? json["id"];
@@ -42,6 +58,14 @@ class MatchProfile {
     photo4 = json['photo4'];
     phone = json['phone'];
     mobile = json['mobile'];
+    birthtime = json['birthtime'];
+    birthplace = json['birthplace'];
+    education = json['education'];
+    occupation = json['occupation'];
+    annualIncome = json['annual_income'];
+    subcaste = json['subcaste'];
+    expectations = json['general_expt'] ?? json['expectations'];
+    assets = json['residance'] ?? json['assets'];
   }
 
   Map<String, dynamic> toJson() {
@@ -59,6 +83,14 @@ class MatchProfile {
     data['photo4'] = this.photo4;
     data['phone'] = this.phone;
     data['mobile'] = this.mobile;
+    data['birthtime'] = this.birthtime;
+    data['birthplace'] = this.birthplace;
+    data['education'] = this.education;
+    data['occupation'] = this.occupation;
+    data['annual_income'] = this.annualIncome;
+    data['subcaste'] = this.subcaste;
+    data['general_expt'] = this.expectations;
+    data['residance'] = this.assets;
     return data;
   }
 }
