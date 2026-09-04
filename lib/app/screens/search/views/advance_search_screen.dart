@@ -88,7 +88,7 @@ class AdvanceSearchScreen extends GetView<SearchProfilesController> {
                                 required: true,
                                 initialValue: controller.searchProfile.value.gender,
                                 onChanged: (value) {
-                                  controller.searchProfile.value.gender = value.toLowerCase();
+                                  controller.searchProfile.value.gender = value;
                                 },
                               ),
                               const SizedBox(

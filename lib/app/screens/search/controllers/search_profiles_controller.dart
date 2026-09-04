@@ -703,16 +703,16 @@ class SearchProfilesController extends GetxController {
             );
             Future.delayed(const Duration(seconds: 1), () {
               Get.offAllNamed(
-                Routes.HOME,
-                predicate: (route) => Get.currentRoute == "/home",
+                Routes.PACKAGES,
+                predicate: (route) => Get.currentRoute == "/packages",
               );
               // paymentGateway(context).then((value) {});
             });
           } else {
             Future.delayed(const Duration(seconds: 1), () {
               Get.offAllNamed(
-                Routes.HOME,
-                predicate: (route) => Get.currentRoute == "/home",
+                Routes.PACKAGES,
+                predicate: (route) => Get.currentRoute == "/packages",
               );
               // paymentGateway(context).then((value) {});
             });
@@ -764,15 +764,18 @@ class SearchProfilesController extends GetxController {
         if (reinit) {
           searchMacthes.value = emptyList;
         } else {
-          searchMacthes.addAll(emptyList);
+          for (var profile in emptyList) {
+            if (!searchMacthes.any((element) => element.profileId == profile.profileId)) {
+              searchMacthes.add(profile);
+            }
+          }
         }
         searchMacthes.refresh();
       }
 
       isLoading.value = false;
-      searchProfile = Search(gender: "Female").obs;
+      // searchProfile = Search(gender: "Female").obs;
       Get.toNamed(Routes.SEARCH_PROFILES_LIST);
-
     });
   }
 
