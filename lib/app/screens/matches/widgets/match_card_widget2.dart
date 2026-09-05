@@ -180,40 +180,56 @@ class _MatchCardWidgetState extends State<MatchCardWidget> {
         fullProfile = response.data as ProfileDetails;
       }
 
-      String profileId = widget.profile.profileId ?? '';
-      String name = fullProfile?.name ?? widget.profile.name ?? '';
-      String idDisplay = "$profileId-$name";
+      String profileId = widget.profile.profileId ?? '-';
+      String fullName = fullProfile?.name ?? widget.profile.name ?? '';
+      String firstName = fullName.split(' ').first;
+      if (firstName.isEmpty) firstName = '-';
+      
+      String dobYear = '-';
+      String? dob = fullProfile?.dob ?? widget.profile.dob;
+      if (dob != null && dob.isNotEmpty && dob != 'null') {
+        try {
+          DateTime date = DateFormat("yyyy-MM-dd").parse(dob);
+          dobYear = date.year.toString();
+        } catch (e) {
+          if (dob.length >= 4) {
+            dobYear = dob.substring(0, 4);
+          }
+        }
+      }
+
+      String getValue(String? val, {bool checkNumeric = true}) {
+        if (val == null || val.isEmpty || val == 'null' || val == 'N/A' || val == 'undefined') return '-';
+        if (checkNumeric && RegExp(r'^\d+$').hasMatch(val.trim())) return '-';
+        return val;
+      }
+
+      final currentUser = Get.find<AuthService>().user.value;
+      String branchLocation = getValue(currentUser.location, checkNumeric: false);
+      String branchMobile = getValue(currentUser.mobile, checkNumeric: false);
 
       final String shareText = '''
-▪️ 🤵 स्थळ : ${fullProfile?.religion ?? widget.profile.religion ?? 'N/A'}-${fullProfile?.caste ?? widget.profile.caste ?? 'N/A'}
-▪️ 🆔 : $idDisplay
-▪️ जन्म ता : ${fullProfile?.dob ?? widget.profile.dob ?? 'N/A'}
-▪️ जन्मवेळ : ${fullProfile?.birthtime ?? 'N/A'}
-▪️ शिक्षण : ${fullProfile?.education ?? 'N/A'}
-▪️ *व्यवसाय : ${fullProfile?.occupation ?? 'N/A'}*
-▪️ वार्षिक उत्पन्न : ${fullProfile?.annualIncome ?? 'N/A'}
-▪️ मुळगाव : ${fullProfile?.birthplace ?? 'N/A'}
-▪️ सध्या : ${fullProfile?.location ?? widget.profile.location ?? 'N/A'}
-▪️ स्थावर : ${fullProfile?.residance ?? 'N/A'}
-▪️ अपेक्षा : ${fullProfile?.partnerPreferance?.generalExpt ?? 'N/A'}
-▪️ अधिक माहितीसाठी खालील लिंक वर टच करून पहावे👇        
+▪️ 🤵 स्थळ : ${getValue(fullProfile?.religion ?? widget.profile.religion)} - ${getValue(fullProfile?.caste ?? widget.profile.caste)}
+▪️ 🆔 : $profileId
+▪️ नाव : $firstName
+▪️ जन्मतारीख : $dobYear
+▪️ शिक्षण : ${getValue(fullProfile?.education)}
+▪️ नोकरी / व्यवसाय : ${getValue(fullProfile?.occupation)}
+▪️ वार्षिक पगार / उत्पन्न : ${getValue(fullProfile?.annualIncome)}
+▪️ मुळगाव : ${getValue(fullProfile?.birthplace)}
+▪️ सध्याचा पत्ता : ${getValue(fullProfile?.location ?? widget.profile.location)}
+▪️ अपेक्षा : ${getValue(fullProfile?.partnerPreferance?.generalExpt)}
+
+अधिक माहितीसाठी खालील लिंक वर क्लिक करावे.👇        
 https://www.marathisoyrik.in/viewFullProfile.php?id=$profileId
 
 🚩🚩🚩🚩🚩🚩🚩🚩🚩🚩
-संपर्क:
-अहिल्यानगर (अ.नगर)
-वैष्णवी कॉम्प्लेक्स, जगदंबा क्लॉथ समोर, भिस्तबाग चौक, पाईपलाईन रोड, अहिल्यानगर (अ.नगर) - ४१४००१, महाराष्ट्र. 📞 7447785910 / 8847724680
-
-पुणे
-कान्हूर पठार पतसंस्थेच्या वर, पुणे-नगर हायवे टच, चंदननगर, पुणे. 📞 7020281282
-
-नाशिक
-शॉप नंबर 157, दुसरा मजला स्टार प्लस बिल्डिंग, मुक्तिधाम गार्डनच्या जवळ, नाशिक रोड, नाशिक. 📞 8453902222
-
-🚩🚩🚩🚩🚩🚩🚩🚩🚩🚩
-मराठी सोयरीक संस्था
-📱वेळ स. 9.00 ते सायं. 8.00  
-🚩👫🚩👫🚩👫🚩👫🚩
+संपर्क : मराठा सोयरीक संस्था, 
+महाराष्ट्रातील नं. १ विश्वसनीय वधुवर सुचक केंद्र 
+ आमच्या शाखा
+$branchLocation $branchMobile
+वेळ : स.10 ते सायं. 7 
+❤️👫❤️👫❤️👫❤️
 ''';
 
       final imageUrl = (widget.profile.photo1 ?? "").isNotEmpty
@@ -355,7 +371,7 @@ https://www.marathisoyrik.in/viewFullProfile.php?id=$profileId
                     },
                     child: _getBottomItem("Message", Icons.chat, chatLoading),
                   ),
-                  if (Get.find<AuthService>().currentUserRole == "1")
+                //  if (Get.find<AuthService>().currentUserRole == "1")
                     InkWell(
                       onTap: _shareProfile,
                       child: _getBottomItem("Share", Icons.share, shareLoading),

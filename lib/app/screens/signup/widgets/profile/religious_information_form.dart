@@ -117,7 +117,7 @@ class ReligiousInformationForm extends GetView<SignUpController> {
                                   controller.religiousDetails.value.subcaste = value;
                                 },
                               ),
-                              const SizedBox(
+                              /*const SizedBox(
                                 height: 10,
                               ),
                               const Padding(
@@ -140,7 +140,7 @@ class ReligiousInformationForm extends GetView<SignUpController> {
                                 onChanged: (value) {
                                   controller.religiousDetails.value.manglik = value;
                                 },
-                              ),
+                              ),*/
                               MyFormField(
                                 fieldName: "Devak",
                                 // showFieldName: false,
@@ -163,7 +163,7 @@ class ReligiousInformationForm extends GetView<SignUpController> {
                                   controller.religiousDetails.value.gan = value;
                                 },
                               ),
-                              MyFormField(
+                             /* MyFormField(
                                 fieldName: "Gotra",
                                 // showFieldName: false,
                                 type: InputType.TEXT,
@@ -184,7 +184,7 @@ class ReligiousInformationForm extends GetView<SignUpController> {
                                 onChanged: (value) {
                                   controller.religiousDetails.value.charan = value;
                                 },
-                              ),
+                              ),*/
                               MyFormField(
                                 fieldName: "Rashi",
                                 // showFieldName: false,

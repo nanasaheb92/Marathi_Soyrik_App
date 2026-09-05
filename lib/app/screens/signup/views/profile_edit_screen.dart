@@ -306,7 +306,7 @@ class ProfileEditScreen extends StatelessWidget {
                               SizedBox(
                                 height: 15.0,
                               ),
-                              Divider(
+                          /*    Divider(
                                 thickness: 0.5, // Adjust the thickness of the line
                                 color: Colors.grey, // Change the color of the line
                                 indent: 0, // Space on the left side
@@ -314,8 +314,8 @@ class ProfileEditScreen extends StatelessWidget {
                               ),
                               SizedBox(
                                 height: 15.0,
-                              ),
-                              GestureDetector(
+                              ),*/
+                             /* GestureDetector(
                                 onTap: () {
                                   Get.toNamed(Routes.UPLOAD_DOCS, arguments: {"isLoggedIn": true});
                                 },
@@ -335,7 +335,7 @@ class ProfileEditScreen extends StatelessWidget {
                                     ),
                                   ],
                                 ),
-                              ),
+                              ),*/
                             ],
                           ),
                         ),

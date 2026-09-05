@@ -46,12 +46,12 @@ class LifestyleDetailsView extends GetView<MatchController> {
                   EntryWidget(title: "Body Type", value: profile.bodyType),
                   EntryWidget(title: "Skin Tone", value: profile.skinTone),
                   EntryWidget(title: "Blood Group", value: profile.bloodGroup),
-                  EntryWidget(
+               /*   EntryWidget(
                       title: "Eating Habit", value: profile.eatingHabbit),
                   EntryWidget(
                       title: "Drinking Habit", value: profile.drinkingHabbit),
                   EntryWidget(
-                      title: "Smoking Habit", value: profile.smokingHabbit),
+                      title: "Smoking Habit", value: profile.smokingHabbit),*/
                 ],
               ),
             ),

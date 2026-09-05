@@ -103,7 +103,7 @@ class ReligiousPreferenceForm extends GetView<SignUpController> {
                                   controller.religiousPreference.value.caste = value;
                                 },
                               ),
-                              MyFormField(
+                              /*MyFormField(
                                 fieldName: "Manglik",
                                 type: InputType.DROP_DOWN,
                                 keyboard: TextInputType.number,
@@ -113,7 +113,7 @@ class ReligiousPreferenceForm extends GetView<SignUpController> {
                                 onChanged: (value) {
                                   controller.religiousPreference.value.manglik = value;
                                 },
-                              ),
+                              ),*/
                               MyFormField(
                                 fieldName: "Star",
                                 type: InputType.TEXT,

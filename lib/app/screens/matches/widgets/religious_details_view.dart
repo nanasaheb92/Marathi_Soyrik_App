@@ -46,8 +46,8 @@ class ReligiousDetailsView extends GetView<MatchController> {
                   EntryWidget(title: "Religion", value: profile.religion),
                   EntryWidget(title: "Caste", value: profile.caste),
                   EntryWidget(title: "Sub Caste", value: profile.subcaste),
-                  EntryWidget(title: "Gotra", value: profile.gotra),
-                  EntryWidget(title: "Manglik", value: profile.manglik),
+              /*    EntryWidget(title: "Gotra", value: profile.gotra),
+                  EntryWidget(title: "Manglik", value: profile.manglik),*/
                   EntryWidget(title: "Horoscope", value: profile.horoscope),
                   EntryWidget(title: "Star", value: profile.star),
                   EntryWidget(title: "Moonsign", value: profile.moonsign),

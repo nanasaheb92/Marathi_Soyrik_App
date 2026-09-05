@@ -81,7 +81,9 @@ class PartnerPreferenceDetailView extends GetView<MatchController> {
                           title: "Mother Tounge",
                           value: basicPreference.mothertounge,
                         ),
-                        EntryWidget(
+                      //temp removethis
+
+                      /*  EntryWidget(
                           title: "Eating Habbits",
                           value: basicPreference.eatingHabit,
                         ),
@@ -92,7 +94,7 @@ class PartnerPreferenceDetailView extends GetView<MatchController> {
                         EntryWidget(
                           title: "Smoking Habbits",
                           value: basicPreference.drinkingHabit,
-                        ),
+                        ),*/
                         EntryWidget(
                           title: "Expectations",
                           value: basicPreference.generalExpt,

@@ -37,7 +37,7 @@ dependencies:
   # DIO
   dio: ^5.6.0
   # FONTS
-  google_fonts: ^8.2.1
+  google_fonts: ^6.3.0
   intl: ^0.19.0
   # SHIMMER
   shimmer: ^3.0.0

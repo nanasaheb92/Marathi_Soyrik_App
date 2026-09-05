@@ -117,7 +117,7 @@ class LifestyleDetailsForm extends GetView<SignUpController> {
                                   controller.lifestyleDetails.value.bloodGroup = value;
                                 },
                               ),
-                              MyFormField(
+                              /*MyFormField(
                                 fieldName: "Eating Habit (Veg/Non-Veg)",
                                 // showFieldName: false,
                                 type: InputType.DROP_DOWN,
@@ -152,7 +152,7 @@ class LifestyleDetailsForm extends GetView<SignUpController> {
                                 onChanged: (value) {
                                   controller.lifestyleDetails.value.drinkingHabbit = value;
                                 },
-                              ),
+                              ),*/
                             ],
                           ),
                         ),

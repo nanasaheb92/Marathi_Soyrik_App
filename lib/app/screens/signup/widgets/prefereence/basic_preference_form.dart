@@ -179,7 +179,7 @@ class BasicPreferenceForm extends GetView<SignUpController> {
                                   )
                                 ],
                               ),
-                              MyFormField(
+                              /*MyFormField(
                                 fieldName: "Eating Habit",
                                 type: InputType.DROP_DOWN,
                                 dropDownOptions: Constants.DIETARY_PREFS_LIST,
@@ -200,7 +200,7 @@ class BasicPreferenceForm extends GetView<SignUpController> {
                                 onChanged: (value) {
                                   controller.basicPreference.value.drinkingHabit = value;
                                 },
-                              ),
+                              ),*/
                               MyFormField(
                                 fieldName: "General Expectations",
                                 type: InputType.TEXT,
