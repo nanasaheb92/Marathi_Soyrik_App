@@ -162,8 +162,8 @@ class BasicDetailsView extends GetView<MatchController> {
                   EntryWidget(title: "Gender", value: profile.gender),
                   EntryWidget(title: "Height", value: profile.height),
                   EntryWidget(title: "Languages", value: profile.languages),
-                  EntryWidget(title: "Hobbies", value: profile.hobbies),
-                  EntryWidget(title: "Weight", value: profile.weight),
+                 /* EntryWidget(title: "Hobbies", value: profile.hobbies),
+                  EntryWidget(title: "Weight", value: profile.weight),*/
                   EntryWidget(
                       title: "No. Of Children", value: profile.noofchildren),
                 ],

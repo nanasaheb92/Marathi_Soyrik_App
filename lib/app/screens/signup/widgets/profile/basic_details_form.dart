@@ -168,7 +168,7 @@ class PersonalDetailsForm extends GetView<SignUpController> {
                                     },
                                   ),
                                   //Hobbies
-                                  MyFormField(
+                              /*    MyFormField(
                                     fieldName: "Hobbies",
                                     type: InputType.TEXT,
                                     keyboard: TextInputType.name,
@@ -188,7 +188,7 @@ class PersonalDetailsForm extends GetView<SignUpController> {
                                     onChanged: (value) {
                                       controller.basicDetails.value.weight = value;
                                     },
-                                  ),
+                                  ),*/
                                   //Birth Time
                                   MyFormField(
                                     fieldName: "Birth Time",

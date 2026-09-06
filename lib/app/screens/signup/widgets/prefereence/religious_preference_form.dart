@@ -114,7 +114,7 @@ class ReligiousPreferenceForm extends GetView<SignUpController> {
                                   controller.religiousPreference.value.manglik = value;
                                 },
                               ),*/
-                              MyFormField(
+                            /*  MyFormField(
                                 fieldName: "Star",
                                 type: InputType.TEXT,
                                 keyboard: TextInputType.text,
@@ -123,7 +123,7 @@ class ReligiousPreferenceForm extends GetView<SignUpController> {
                                 onChanged: (value) {
                                   controller.religiousPreference.value.star = value;
                                 },
-                              ),
+                              ),*/
                               SizedBox(
                                 height: 10,
                               ),

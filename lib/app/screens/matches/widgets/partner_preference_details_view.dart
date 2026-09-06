@@ -122,14 +122,14 @@ class PartnerPreferenceDetailView extends GetView<MatchController> {
                           title: "Caste",
                           value: religiousPreference.caste,
                         ),
-                        EntryWidget(
+                      /*  EntryWidget(
                           title: "Manglik",
                           value: religiousPreference.manglik,
-                        ),
-                        EntryWidget(
+                        ),*/
+                       /* EntryWidget(
                           title: "Star",
                           value: religiousPreference.star,
-                        ),
+                        ),*/
                       ],
                     ),
                   ),

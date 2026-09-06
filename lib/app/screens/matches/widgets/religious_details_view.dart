@@ -49,7 +49,7 @@ class ReligiousDetailsView extends GetView<MatchController> {
               /*    EntryWidget(title: "Gotra", value: profile.gotra),
                   EntryWidget(title: "Manglik", value: profile.manglik),*/
                   EntryWidget(title: "Horoscope", value: profile.horoscope),
-                  EntryWidget(title: "Star", value: profile.star),
+         /*         EntryWidget(title: "Star", value: profile.star),*/
                   EntryWidget(title: "Moonsign", value: profile.moonsign),
                 ],
               ),
