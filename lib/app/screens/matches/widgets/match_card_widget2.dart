@@ -216,7 +216,7 @@ https://www.marathisoyrik.in/viewFullProfile.php?id=$profileId
 
 🚩🚩🚩🚩🚩🚩🚩
 *संपर्क : मराठा सोयरीक संस्था,*
-महाराष्ट्रातील नं. १ विश्वसनीय वधुवर सुचक केंद्र 
+महाराष्ट्रातील नं. १ विश्वसनीय वधुवर सुचक संस्था 
 *आमच्या शाखा*  
 $branchLocation $branchMobile
 *वेळ : स.10 ते सायं. 7*  
