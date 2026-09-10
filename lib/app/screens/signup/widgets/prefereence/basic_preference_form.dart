@@ -87,7 +87,7 @@ class BasicPreferenceForm extends GetView<SignUpController> {
                                 keyboard: TextInputType.text,
                                 dropDownOptions: const [
                                   "Divorced",
-                                  "Never Married",
+                                  "Single",
                                   "Widow",
                                   "Widower",
                                 ],

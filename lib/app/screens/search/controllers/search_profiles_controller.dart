@@ -123,8 +123,8 @@ class SearchProfilesController extends GetxController {
     "Jewish",
     "Bahai"
   ];
-
-  List<String> maritialStatuses = ["Single", "Never Married", "Married", "Divorced", "Widowed"];
+//"Never Married",
+  List<String> maritialStatuses = ["Single","Married", "Divorced", "Widowed"];
   List<String> gender = ["Male", "Female"];
   List<String> profileCreators = [
     "Self",
