@@ -149,17 +149,28 @@ class HomeController extends GetxController {
   RxInt page = 1.obs;
   RxInt totalPage = 1.obs;
   RxList<MatchProfile> macthes = <MatchProfile>[].obs;
+  
+  bool _isFetchingMatches = false;
+
   void fetchMatchedProfiles(bool reinit) async {
+    if (_isFetchingMatches) return;
+    
     List<MatchProfile> emptyList = [];
     //List<MatchProfile> nearbyList = [];
     if (reinit) {
       page.value = 1;
       totalPage.value = 1;
       macthes.value = [];
+      macthes.refresh();
     }
+    
+    _isFetchingMatches = true;
     isLoading.value = true;
+    
     await _matchesRepository.fetchMatchedProfiles(page.value).then((value) {
       isLoading.value = false;
+      _isFetchingMatches = false;
+      
       if (value.status == Status.COMPLETED) {
         totalPage.value = value.data["total_pages"];
         // ((value.data["count_total"] / value.data["count"]) as double).round();
@@ -173,13 +184,20 @@ class HomeController extends GetxController {
           macthes.value = emptyList;
           //nearbyProfiles.value = nearbyList;
         } else {
-          isLoading.value = false;
-          macthes.addAll(emptyList);
+          for (var profile in emptyList) {
+            if (!macthes.any((element) => element.profileId == profile.profileId)) {
+              macthes.add(profile);
+            }
+          }
+          //macthes.addAll(emptyList);
           //nearbyProfiles.addAll(nearbyList);
         }
         macthes.refresh();
         //nearbyProfiles.refresh();
       }
+    }).catchError((err) {
+      isLoading.value = false;
+      _isFetchingMatches = false;
     });
   }
 

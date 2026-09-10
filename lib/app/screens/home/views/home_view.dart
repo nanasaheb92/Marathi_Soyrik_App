@@ -41,49 +41,41 @@ class HomeView extends GetView<HomeController> {
                           controller: controller.matchesScrollController,
                           scroll: true,
                           children: [
-                            controller.macthes.isEmpty &&
-                                    !controller.isLoading.value
-                                ? SizedBox(
-                                    height: 200 * fem,
-                                    child: const Center(
-                                      child: TextView(
-                                        text: "No More Matches !",
-                                        color: ColorPallete.grey,
-                                        fontSize: 16,
-                                      ),
-                                    ),
-                                  )
-                                : MyListView(
-                                    children: controller.macthes
-                                        .map((e) => MatchCardWidget(
-                                              profile: e,
-                                              sendInterest: () async {
-                                                return await Get.find<
-                                                        MatchController>()
-                                                    .sendInterestTo(e, context)
-                                                    .then((value) {
-                                                  value == true
-                                                      ? controller.macthes
-                                                          .remove(e)
-                                                      : () {};
-                                                  return value;
-                                                });
-                                              },
-                                              addToShortlist: () async {
-                                                return await Get.find<
-                                                        MatchController>()
-                                                    .addToShorlist(e)
-                                                    .then((value) {
-                                                  value == true
-                                                      ? controller.macthes
-                                                          .remove(e)
-                                                      : () {};
-                                                  return value;
-                                                });
-                                              },
-                                            ))
-                                        .toList(),
+                            if (controller.macthes.isEmpty && !controller.isLoading.value)
+                              SizedBox(
+                                height: 200 * fem,
+                                child: const Center(
+                                  child: TextView(
+                                    text: "No More Matches !",
+                                    color: ColorPallete.grey,
+                                    fontSize: 16,
                                   ),
+                                ),
+                              )
+                            else
+                              ...controller.macthes.map((e) => MatchCardWidget(
+                                    profile: e,
+                                    sendInterest: () async {
+                                      return await Get.find<MatchController>()
+                                          .sendInterestTo(e, context)
+                                          .then((value) {
+                                        if (value == true) {
+                                          controller.macthes.remove(e);
+                                        }
+                                        return value;
+                                      });
+                                    },
+                                    addToShortlist: () async {
+                                      return await Get.find<MatchController>()
+                                          .addToShorlist(e)
+                                          .then((value) {
+                                        if (value == true) {
+                                          controller.macthes.remove(e);
+                                        }
+                                        return value;
+                                      });
+                                    },
+                                  )),
                             if (controller.isLoading.value) const Loading()
                           ],
                         ),
