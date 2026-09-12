@@ -69,7 +69,7 @@ class _MatchCardWidgetState extends State<MatchCardWidget> {
       String getValue(String? val, {bool checkNumeric = true}) {
         if (val == null || val.isEmpty || val == 'null' || val == 'N/A' || val == 'undefined') return '-';
         if (checkNumeric && RegExp(r'^\d+$').hasMatch(val.trim())) return '-';
-        return val;
+        return '$val';
       }
 
       String profileId = widget.profile.profileId ?? '-';
@@ -88,20 +88,20 @@ class _MatchCardWidgetState extends State<MatchCardWidget> {
       }
 
       final currentUser = Get.find<AuthService>().user.value;
-      String branchLocation = getValue(currentUser.location, checkNumeric: false);
-      String branchMobile = getValue(currentUser.mobile, checkNumeric: false);
+      String bLoc = (currentUser.location == null || currentUser.location!.isEmpty || currentUser.location == 'null') ? '-' : currentUser.location!;
+      String bMob = (currentUser.mobile == null || currentUser.mobile!.isEmpty || currentUser.mobile == 'null') ? '-' : currentUser.mobile!;
 
       final String shareText = '''
-*🔸🤵 स्थळ :* ${getValue(fullProfile?.religion ?? widget.profile.religion)} - ${getValue(fullProfile?.caste ?? widget.profile.caste)}
-*🔸 🆔* $profileId
-*🔸 नाव :* $firstName
-*🔸 जन्मतारीख :* $dob
-*🔸 शिक्षण :* ${getValue(fullProfile?.education)}
-*🔸 नोकरी / व्यवसाय :* ${getValue(fullProfile?.occupation)}
-*🔸 वार्षिक पगार / उत्पन्न :* ${getValue(fullProfile?.annualIncome)}
-*🔸 मुळगाव :* ${getValue(fullProfile?.birthplace)}
-*🔸 सध्याचा पत्ता :* ${getValue(fullProfile?.location ?? widget.profile.location)}
-*🔸 अपेक्षा :* ${getValue(fullProfile?.partnerPreferance?.generalExpt)}
+🔸🤵 स्थळ :* ${getValue(fullProfile?.religion ?? widget.profile.religion)} - ${getValue(fullProfile?.caste ?? widget.profile.caste)}
+🔸 🆔 $profileId
+🔸नाव :* $firstName
+🔸जन्मतारीख :* $dob
+🔸शिक्षण :* ${getValue(fullProfile?.education)}
+🔸नोकरी / व्यवसाय :* ${getValue(fullProfile?.occupation)}
+🔸वार्षिक पगार / उत्पन्न :* ${getValue(fullProfile?.annualIncome)}
+🔸मुळगाव :* ${getValue(fullProfile?.birthplace)}
+🔸सध्याचा पत्ता :* ${getValue(fullProfile?.location ?? widget.profile.location)}
+🔸अपेक्षा :* ${getValue(fullProfile?.partnerPreferance?.generalExpt)}
 
 अधिक माहितीसाठी खालील लिंक वर क्लिक करावे.👇       
 https://www.marathisoyrik.in/viewFullProfile.php?id=$profileId
@@ -111,7 +111,7 @@ https://www.marathisoyrik.in/viewFullProfile.php?id=$profileId
 संपर्क : मराठा सोयरीक संस्था,
 महाराष्ट्रातील नं. १ विश्वसनीय वधुवर सुचक संस्था 
 आमच्या शाखा  
-$branchLocation $branchMobile
+$bLoc $bMob
 वेळ : स.10 ते सायं.7 पर्यंत
 👩‍❤️‍👨   👩‍❤️‍👨   👩‍❤️‍👨  👩‍❤️‍👨  👩‍❤️‍👨
 ''';

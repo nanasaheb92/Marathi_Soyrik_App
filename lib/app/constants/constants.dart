@@ -1,7 +1,7 @@
 class Constants {
   static var AGE_LIST = List.generate(47, (index) => "${18 + index}");
   static const RELIGION_LIST = ["Hindu", "Buddhist", "Christian", "Muslim", "Sikh", "Parsi", "Jain"];
-  static const MARITAL_STATUS_LIST = ["Never Married", "Awaiting Divorcee", "Divorced", "Widowed"];
+  static const MARITAL_STATUS_LIST = ["Single", "Awaiting Divorcee", "Divorced", "Widowed"];
   static const RELIGION_PREFS_LIST = ["Any", "Hindu", "Buddhist", "Christian", "Muslim", "Sikh", "Parsi", "Jain"];
   static const PROFILE_CREATORS_LIST = ["Self", "Parents", "Sister", "Brother", "Guardian"];
   static const ON_OFF = ["on", "off"];
