@@ -206,28 +206,28 @@ class _MatchCardWidgetState extends State<MatchCardWidget> {
       String bMob = (currentUser.mobile == null || currentUser.mobile!.isEmpty || currentUser.mobile == 'null') ? '-' : currentUser.mobile!;
 
       final String shareText = '''
-*🔸🤵 स्थळ :* ${getValue(fullProfile?.religion ?? widget.profile.religion)} - ${getValue(fullProfile?.caste ?? widget.profile.caste)}
-*🔸 🆔* $profileId
-*🔸 नाव :* $firstName
-*🔸 जन्मतारीख :* $dob
-*🔸 नक्षत्र :* ${getValue(fullProfile?.star)}
-*🔸 शिक्षण :* ${getValue(fullProfile?.education)}
-*🔸 नोकरी / व्यवसाय :* ${getValue(fullProfile?.occupation)}
-*🔸 वार्षिक पगार / उत्पन्न :* ${getValue(fullProfile?.annualIncome)}
-*🔸 मुळगाव :* ${getValue(fullProfile?.birthplace)}
-*🔸 सध्याचा पत्ता :* ${getValue(fullProfile?.location ?? widget.profile.location)}
-*🔸 अपेक्षा :* ${getValue(fullProfile?.partnerPreferance?.generalExpt)}
+🔸🤵 स्थळ :* ${getValue(fullProfile?.religion ?? widget.profile.religion)} - ${getValue(fullProfile?.caste ?? widget.profile.caste)} *
+🔸 🆔 $profileId
+🔸नाव :* $firstName *
+🔸जन्मतारीख :* $dob *
+🔸नक्षत्र :* ${getValue(fullProfile?.star)} *
+🔸शिक्षण :* ${getValue(fullProfile?.education)} *
+🔸नोकरी / व्यवसाय :* ${getValue(fullProfile?.occupation)} *
+🔸वार्षिक पगार / उत्पन्न :* ${getValue(fullProfile?.annualIncome)} *
+🔸मुळगाव :* ${getValue(fullProfile?.birthplace)} *
+🔸सध्याचा पत्ता :* ${getValue(fullProfile?.location ?? widget.profile.location)} *
+🔸अपेक्षा :* ${getValue(fullProfile?.partnerPreferance?.generalExpt)} *
 
-*अधिक माहितीसाठी खालील लिंक वर क्लिक करावे.👇*       
+अधिक माहितीसाठी खालील लिंक वर क्लिक करावे.👇       
 https://www.marathisoyrik.in/viewFullProfile.php?id=$profileId
 
 🌺🌺🌺🌺🌺🌺
 
-*संपर्क : मराठा सोयरीक संस्था,*
-*महाराष्ट्रातील नं. १ विश्वसनीय वधुवर सुचक संस्था* 
-*आमच्या शाखा*  
+संपर्क : मराठा सोयरीक संस्था,
+महाराष्ट्रातील नं. १ विश्वसनीय वधुवर सुचक संस्था 
+आमच्या शाखा  
 $bLoc $bMob
-*वेळ : स.10 ते सायं.7 पर्यंत*
+वेळ : स.10 ते सायं.7 पर्यंत
 👩‍❤️‍👨   👩‍❤️‍👨   👩‍❤️‍👨  👩‍❤️‍👨  👩‍❤️‍👨
 ''';
 
