@@ -213,7 +213,7 @@ class _MatchCardWidgetState extends State<MatchCardWidget> {
 *🔸 शिक्षण :* ${getValue(fullProfile?.education)}
 *🔸 नोकरी / व्यवसाय :* ${getValue(fullProfile?.occupation)}
 *🔸 वार्षिक पगार / उत्पन्न :* ${getValue(fullProfile?.annualIncome)}
-*🔸 मुळगाव :* ${getValue(fullProfile?.birthplace)}
+*🔸 मुळगाव :* ${getValue(fullProfile?.nativePlace ?? fullProfile?.birthplace)}
 *🔸 सध्याचा पत्ता :* ${getValue(fullProfile?.location ?? widget.profile.location)}
 *🔸 अपेक्षा :* ${getValue(fullProfile?.partnerPreferance?.generalExpt)}
 
@@ -369,7 +369,7 @@ $bLoc $bMob
                     },
                     child: _getBottomItem("Message", Icons.chat, chatLoading),
                   ),
-                //  if (Get.find<AuthService>().currentUserRole == "1")
+                  if (Get.find<AuthService>().currentUserRole == "1")
                     InkWell(
                       onTap: _shareProfile,
                       child: _getBottomItem("Share", Icons.share, shareLoading),

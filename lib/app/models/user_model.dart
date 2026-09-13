@@ -297,6 +297,7 @@ class LocationDetails {
   String? residance;
   String? timeToCall;
   String? id;
+  String? nativePlace;
 
   LocationDetails(
       {this.country,
@@ -305,7 +306,8 @@ class LocationDetails {
       this.address,
       this.residance,
       this.timeToCall,
-      this.id});
+      this.id,
+      this.nativePlace});
 
   LocationDetails.fromJson(Map<String, dynamic> json) {
     country = json['country'];
@@ -315,6 +317,7 @@ class LocationDetails {
     residance = json['residance'];
     timeToCall = json['time_to_call'];
     id = json['id'];
+    nativePlace = json['native_place'];
   }
 
   Map<String, dynamic> toJson() {
@@ -326,6 +329,7 @@ class LocationDetails {
     data['residance'] = residance;
     data['time_to_call'] = timeToCall;
     data['id'] = id;
+    data['native_place'] = nativePlace;
     return data;
   }
 }

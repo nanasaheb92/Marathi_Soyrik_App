@@ -146,6 +146,17 @@ class LocationDetailsForm extends GetView<SignUpController> {
                                   controller.locationDetails.value.address = value;
                                 },
                               ),
+                              MyFormField(
+                                fieldName: "Native Place",
+                                // showFieldName: false,
+                                type: InputType.TEXT,
+                                keyboard: TextInputType.text,
+                                required: false,
+                                initialValue: controller.locationDetails.value.nativePlace,
+                                onChanged: (value) {
+                                  controller.locationDetails.value.nativePlace = value;
+                                },
+                              ),
                               // MyFormField(
                               //   fieldName: "Mobile",
                               //   // showFieldName: false,

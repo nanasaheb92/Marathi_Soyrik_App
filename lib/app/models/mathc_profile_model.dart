@@ -20,6 +20,7 @@ class MatchProfile {
   String? subcaste;
   String? expectations;
   String? assets;
+  String? nativePlace;
 
   MatchProfile(
       {this.profileId,
@@ -42,7 +43,8 @@ class MatchProfile {
       this.annualIncome,
       this.subcaste,
       this.expectations,
-      this.assets});
+      this.assets,
+      this.nativePlace});
 
   MatchProfile.fromJson(Map<String, dynamic> json) {
     profileId = json['profile_id'] ?? json["id"];
@@ -66,6 +68,7 @@ class MatchProfile {
     subcaste = json['subcaste'];
     expectations = json['general_expt'] ?? json['expectations'];
     assets = json['residance'] ?? json['assets'];
+    nativePlace = json['native_place'];
   }
 
   Map<String, dynamic> toJson() {
@@ -91,6 +94,7 @@ class MatchProfile {
     data['subcaste'] = this.subcaste;
     data['general_expt'] = this.expectations;
     data['residance'] = this.assets;
+    data['native_place'] = this.nativePlace;
     return data;
   }
 }

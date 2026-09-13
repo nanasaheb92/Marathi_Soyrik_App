@@ -191,7 +191,7 @@ class AdvanceSearchScreen extends GetView<SearchProfilesController> {
                               const SizedBox(
                                 height: 10,
                               ),
-                              const TextView(
+                           /*   const TextView(
                                 text: "Height",
                                 fontSize: 16,
                                 color: ColorPallete.primary,
@@ -241,7 +241,7 @@ class AdvanceSearchScreen extends GetView<SearchProfilesController> {
                               ),
                               const SizedBox(
                                 height: 10,
-                              ),
+                              ),*/
                               const TextView(
                                 text: "Education",
                                 fontSize: 16,

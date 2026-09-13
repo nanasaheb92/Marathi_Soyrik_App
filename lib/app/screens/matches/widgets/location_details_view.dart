@@ -44,6 +44,7 @@ class LocationDetailsView extends GetView<MatchController> {
                 scroll: true,
                 children: [
                   EntryWidget(title: "Address", value: profile.address),
+                  EntryWidget(title: "Native Place", value: profile.nativePlace),
                   EntryWidget(title: "City", value: profile.city),
                   EntryWidget(title: "State", value: profile.state),
                   EntryWidget(title: "Country", value: profile.country),
