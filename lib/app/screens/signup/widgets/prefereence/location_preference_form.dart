@@ -91,8 +91,8 @@ class LocationPreferenceForm extends GetView<SignUpController> {
                                     required: true,
                                     dropDownOptions: controller.countries.map((element) => element.name).toList(),
                                     initialValue: (controller.locationPreference.value.country ?? "") != ""
-                                        ? controller.countries.where((p0) => p0.id == int.parse(controller.locationPreference.value.country ?? "0")).isNotEmpty
-                                            ? controller.countries.where((p0) => p0.id == int.parse(controller.locationPreference.value.country ?? "0")).first.name
+                                        ? controller.countries.where((p0) => p0.id.toString() == controller.locationPreference.value.country).isNotEmpty
+                                            ? controller.countries.where((p0) => p0.id.toString() == controller.locationPreference.value.country).first.name
                                             : null
                                         : "",
                                     onChanged: (value) {
@@ -108,8 +108,8 @@ class LocationPreferenceForm extends GetView<SignUpController> {
                                       required: true,
                                       dropDownOptions: controller.states.map((element) => element.name).toList(),
                                       initialValue: (controller.locationPreference.value.state ?? "") != ""
-                                          ? controller.states.where((p0) => p0.id == int.parse(controller.locationPreference.value.state ?? "0")).isNotEmpty
-                                              ? controller.states.where((p0) => p0.id == int.parse(controller.locationPreference.value.state ?? "0")).first.name
+                                          ? controller.states.where((p0) => p0.id.toString() == controller.locationPreference.value.state).isNotEmpty
+                                              ? controller.states.where((p0) => p0.id.toString() == controller.locationPreference.value.state).first.name
                                               : null
                                           : "",
                                       onChanged: (value) {
@@ -125,8 +125,8 @@ class LocationPreferenceForm extends GetView<SignUpController> {
                                       required: true,
                                       dropDownOptions: controller.cities.map((element) => element.name).toList(),
                                       initialValue: (controller.locationPreference.value.city ?? "") != ""
-                                          ? controller.cities.where((p0) => p0.id == int.parse(controller.locationPreference.value.city ?? "0")).isNotEmpty
-                                              ? controller.cities.where((p0) => p0.id == int.parse(controller.locationPreference.value.city ?? "0")).first.name
+                                          ? controller.cities.where((p0) => p0.id.toString() == controller.locationPreference.value.city).isNotEmpty
+                                              ? controller.cities.where((p0) => p0.id.toString() == controller.locationPreference.value.city).first.name
                                               : null
                                           : "",
                                       onChanged: (value) {
