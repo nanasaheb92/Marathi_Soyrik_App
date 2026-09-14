@@ -234,20 +234,34 @@ $bLoc $bMob
           ? Urls.getImageUrl(widget.profile.photo1!)
           : null;
 
+      bool sharedWithImage = false;
+
       if (imageUrl != null && imageUrl.isNotEmpty) {
-        final tempDir = await getTemporaryDirectory();
-        final filePath = '${tempDir.path}/profile_${widget.profile.profileId ?? 'card'}.jpg';
+        try {
+          final tempDir = await getTemporaryDirectory();
+          final filePath = '${tempDir.path}/profile_${widget.profile.profileId ?? 'card'}.jpg';
 
-        await Dio().download(imageUrl, filePath);
+          await Dio().download(imageUrl, filePath, options: Options(
+            sendTimeout: const Duration(seconds: 10),
+            receiveTimeout: const Duration(seconds: 10),
+          ));
 
-        await Share.shareXFiles(
-          [XFile(filePath)],
-          text: shareText,
-        );
-      } else {
+          await Share.shareXFiles(
+            [XFile(filePath)],
+            text: shareText,
+          );
+          sharedWithImage = true;
+        } catch (imageError) {
+          print("Error downloading or sharing image: $imageError");
+          // Fall back to text-only share if image sharing fails
+        }
+      }
+
+      if (!sharedWithImage) {
         await Share.share(shareText);
       }
     } catch (e) {
+      print("Global share error: $e");
       Get.snackbar(
         'Error',
         'Unable to share profile right now',
