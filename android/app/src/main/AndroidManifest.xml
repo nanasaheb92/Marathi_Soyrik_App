@@ -92,10 +92,6 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
-         <meta-data android:name="com.phonepe.android.sdk.isUAT" android:value="true"/> 
-        <meta-data android:name="com.phonepe.android.sdk.isSimulator" android:value="true"/>
-        <meta-data android:name="com.phonepe.android.sdk.MerchantId" android:value="PHONEPEPGUAT8"/> 
-        <meta-data android:name="com.phonepe.android.sdk.AppId" android:value="appId"/>
     </application>
      <queries>
         <!-- If your app checks for call support -->
@@ -116,5 +112,13 @@
             <action android:name="android.intent.action.VIEW" />
             <data android:scheme="market" />
         </intent>
+        <!-- PhonePe / UPI apps for payment -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <data android:scheme="upi" android:host="pay" />
+        </intent>
+        <package android:name="com.phonepe.app" />
+        <package android:name="com.google.android.apps.nbu.paisa.user" />
+        <package android:name="net.one97.paytm" />
     </queries>
 </manifest>

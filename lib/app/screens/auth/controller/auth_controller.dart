@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:otpless_flutter/otpless_flutter.dart';
 
 import '../../../../common/color_pallete.dart';
 import '../../../models/api_response.dart';
@@ -40,8 +39,6 @@ class AuthController extends GetxController {
   AuthController() {
     _userRepository = UserRepository();
     _settingsRepository = SettingsRepository();
-    final otplessFlutterPlugin = Otpless();
-    otplessFlutterPlugin.initHeadless("jxpihpm4bat6dfc1xzct");
   }
 
   Map creds = {
@@ -168,38 +165,61 @@ class AuthController extends GetxController {
 
 
 
-  Future<void> headlessOtplessInitiate(String phoneNumber, void Function(dynamic) callback) async {
-
-    isLoading.value = true;
-
-    print(phoneNumber);
-
-    Map<String, dynamic> arg = {};
-    arg["phone"] = phoneNumber;
-    arg["countryCode"] = "+91";
-// WHATSAPP,SMS and VIBER
-    arg["deliveryChannel"] = "SMS";
-    arg["otpLength"] = "6";
-
-    final otplessFlutterPlugin = Otpless();
-    otplessFlutterPlugin.startHeadless(callback, arg);
-
-
+  void _showMessage(String message, {bool error = false}) {
+    Get.showSnackbar(GetSnackBar(
+      backgroundColor: error ? ColorPallete.red : ColorPallete.primary,
+      duration: const Duration(seconds: 2),
+      message: message,
+    ));
   }
 
-  void headlessOtplessVerifyOtp(String otp, void Function(dynamic) callback) {
-
+  // send-otp.php
+  Future<void> sendMobileOtp({bool resend = false}) async {
+    final mobile = (user.value.mobile ?? "").replaceAll(RegExp(r"\D"), "");
+    if (!RegExp(r"^[6-9]\d{9}$").hasMatch(mobile)) {
+      _showMessage("Please enter a valid 10 digit mobile number", error: true);
+      return;
+    }
+    if (isLoading.value) return;
+    user.value.mobile = mobile;
     isLoading.value = true;
-    print(otp);
+    final result = await _userRepository.sendMobileOtp(mobile);
+    isLoading.value = false;
 
-    Map<String, dynamic> arg = {};
-    arg["phone"] = user.value.mobile;
-    arg["countryCode"] = "+91";
-    arg["otp"] = otp;
-    final otplessFlutterPlugin = Otpless();
-    otplessFlutterPlugin.startHeadless(callback, arg);
+    if (result.status != Status.COMPLETED) {
+      _showMessage(result.message ?? "Unable to send OTP", error: true);
+      return;
+    }
+    _showMessage("OTP sent to +91 $mobile");
+    creds["otp"] = "";
+    if (isResent.value) timer.cancel(); // timer only exists once started
+    times.value = 30;
+    isResent.value = true;
+    startTimer();
+    if (!resend) Get.toNamed(Routes.VERIFY_OTP);
+  }
 
+  // verify-otp.php
+  Future<void> verifyMobileOtp() async {
+    final otp = (creds["otp"] ?? "").toString();
+    if (otp.length != 6) {
+      _showMessage("Please enter the 6 digit OTP", error: true);
+      return;
+    }
+    if (isLoading.value) return;
+    isLoading.value = true;
+    final result =
+        await _userRepository.verifyMobileOtp(user.value.mobile ?? "", otp);
+    isLoading.value = false;
 
+    if (result.status != Status.COMPLETED) {
+      _showMessage(result.message ?? "Invalid OTP", error: true);
+      return;
+    }
+    if (isResent.value) timer.cancel();
+    isResent.value = false;
+    _showMessage("Mobile Verified Successfully!");
+    Get.offNamed(Routes.REGISTER);
   }
 
   Future signIn({bool? toRsd}) async {

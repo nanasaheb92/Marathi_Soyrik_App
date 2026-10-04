@@ -50,6 +50,24 @@ class SettingsRepository {
     });
   }
 
+  //PHONEPE - server creates the signed payload, app only opens the SDK
+  Future<ApiResponse> initiatePhonePePayment(String packId) async {
+    var body = dio.FormData.fromMap({
+      "id": Get.find<AuthService>().user.value.userId,
+      "pack_id": packId,
+    });
+    return await apiProvider.makeAPICall("POST", "phonepe_initiate.php", body);
+  }
+
+  //PHONEPE - server verifies with PhonePe and activates the package
+  Future<ApiResponse> checkPhonePeStatus(String transactionId) async {
+    var body = dio.FormData.fromMap({
+      "id": Get.find<AuthService>().user.value.userId,
+      "transaction_id": transactionId,
+    });
+    return await apiProvider.makeAPICall("POST", "phonepe_status.php", body);
+  }
+
   Future<ApiResponse> fetchCountries() async {
     return await apiProvider.makeAPICall(
         "GET", "master-data.php", {"data": "countries"}).then((value) {

@@ -502,15 +502,11 @@ class SignUpController extends GetxController {
             Get.showSnackbar(
               const GetSnackBar(
                 duration: Duration(seconds: 3),
-                message: "Seting Up App ..\nAnd Going to Home Screen",
+                message: "Seting Up App ..\nChoose your package",
               ),
             );
             Future.delayed(const Duration(seconds: 1), () {
-              Get.offAllNamed(
-                Routes.HOME,
-                predicate: (route) => Get.currentRoute == "/home",
-              );
-              // paymentGateway(context).then((value) {});
+              Get.offAllNamed(Routes.PACKAGES, arguments: {"fromSignup": true});
             });
           } else {
             Future.delayed(const Duration(seconds: 1), () {
@@ -999,16 +995,12 @@ class SignUpController extends GetxController {
         Get.showSnackbar(
           const GetSnackBar(
             duration: Duration(seconds: 3),
-            message: "Setting Up App ..\nAnd Going to Home Screen",
+            message: "Setting Up App ..\nChoose your package",
           ),
         );
 
         Future.delayed(const Duration(seconds: 1), () {
-          Get.offAllNamed(
-            Routes.HOME,
-            predicate: (route) => Get.currentRoute == "/home",
-          );
-          // paymentGateway(context).then((value) {});
+          Get.offAllNamed(Routes.PACKAGES, arguments: {"fromSignup": true});
         });
       } else {
         Get.back();

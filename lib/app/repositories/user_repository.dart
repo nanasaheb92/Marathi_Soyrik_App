@@ -1,7 +1,10 @@
+import 'dart:convert';
+
 import 'package:get/get.dart';
 
 import '../models/api_response.dart';
 import '../models/user_model.dart';
+import '../providers/api_endpoints.dart';
 import '../providers/api_provider.dart';
 import 'package:dio/dio.dart' as dio;
 
@@ -12,6 +15,52 @@ class UserRepository {
 
   UserRepository() {
     apiProvider = Get.find<ApiProvider>();
+  }
+
+  // MOBILE OTP - send-otp.php / verify-otp.php live at the site root (not /apis/)
+  final dio.Dio _otpClient = dio.Dio(dio.BaseOptions(
+    baseUrl: Urls.baseUrl,
+    connectTimeout: const Duration(seconds: 30),
+    responseType: dio.ResponseType.plain,
+  ));
+
+  Future<ApiResponse> sendMobileOtp(String mobile) =>
+      _otpCall("send-otp.php", {"mobile": mobile});
+
+  Future<ApiResponse> verifyMobileOtp(String mobile, String otp) =>
+      _otpCall("verify-otp.php", {"mobile": mobile, "otp": otp});
+
+  /// Accepts JSON {"status": true/false, "message": "..."}.
+  /// Falls back to the current plain-text/HTML output of the PHP files.
+  Future<ApiResponse> _otpCall(String path, Map<String, dynamic> query) async {
+    try {
+      final res = await _otpClient.get(path, queryParameters: query);
+      final body = res.data.toString().trim();
+      try {
+        final json = jsonDecode(body);
+        if (json is Map && json["status"] == true) {
+          return ApiResponse.completed(json);
+        }
+        if (json is Map) {
+          return ApiResponse.error(
+              json["message"]?.toString() ?? "Something went wrong",
+              Error.DATA_FETCH_ERROR);
+        }
+      } catch (_) {}
+      final text = body.replaceAll(RegExp(r"<[^>]*>"), " ").toLowerCase();
+      if (text.contains("invalid") ||
+          text.contains("fail") ||
+          text.contains("error") ||
+          text.contains("expired")) {
+        return ApiResponse.error(
+            text.contains("invalid otp") ? "Invalid OTP" : "Something went wrong",
+            Error.DATA_FETCH_ERROR);
+      }
+      return ApiResponse.completed({"status": true, "message": body});
+    } on dio.DioException {
+      return ApiResponse.error(
+          "Network error, please try again", Error.DATA_FETCH_ERROR);
+    }
   }
 
   // Future<ApiResponse> signUp(String phoneNo) async {

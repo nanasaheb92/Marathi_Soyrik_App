@@ -1,9 +1,7 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:matrimony/app/constants/constants_assets.dart';
-import 'package:matrimony/app/routes/app_routes.dart';
 import 'package:otp_text_field/otp_text_field.dart';
 import 'package:otp_text_field/style.dart';
 
@@ -110,9 +108,9 @@ class VerifyOTPScreen extends GetView<AuthController> {
                           SizedBox(
                             height: 20 * fem,
                           ),
-                          const Center(
+                          Center(
                             child: TextView(
-                              text: "A 6-Digit OTP set to you phone number please enter otp to verify your phone number",
+                              text: "A 6-digit OTP has been sent to +91 ${controller.user.value.mobile ?? ""}. Please enter it to verify your mobile number",
                               color: ColorPallete.secondary,
                               fontSize: 14,
                             ),
@@ -148,6 +146,7 @@ class VerifyOTPScreen extends GetView<AuthController> {
                               ),
                               onCompleted: (pin) {
                                 controller.creds["otp"] = pin;
+                                controller.verifyMobileOtp();
                               },
                               onChanged: (value) {
                                 controller.creds["otp"] = value.length > 5 ? value : "";
@@ -159,9 +158,8 @@ class VerifyOTPScreen extends GetView<AuthController> {
                           ),
                           InkWell(
                             onTap: () {
-                              controller.headlessOtplessVerifyOtp(controller.creds["otp"], onHeadlessResult);
-                              // if (!controller.isLoading.value)
-                              //   controller.verifyOTP();
+                              FocusScope.of(context).unfocus();
+                              controller.verifyMobileOtp();
                             },
                             child: RoundedContainer(
                               radius: 10,
@@ -179,6 +177,24 @@ class VerifyOTPScreen extends GetView<AuthController> {
                               ),
                             ),
                           ),
+                          SizedBox(
+                            height: 15 * fem,
+                          ),
+                          controller.isResent.value
+                              ? TextView(
+                                  text: "Resend OTP in ${controller.times.value}s",
+                                  fontSize: 14,
+                                  color: ColorPallete.secondary,
+                                )
+                              : InkWell(
+                                  onTap: () => controller.sendMobileOtp(resend: true),
+                                  child: const TextView(
+                                    text: "Resend OTP",
+                                    fontSize: 14,
+                                    color: ColorPallete.primary,
+                                    weight: FontWeight.bold,
+                                  ),
+                                ),
                         ],
                       ),
                     ),
@@ -199,56 +215,5 @@ class VerifyOTPScreen extends GetView<AuthController> {
         ]),
       ),
     );
-  }
-
-  void onHeadlessResult(dynamic result) {
-    controller.isLoading.value = false;
-    if (result['statusCode'] == 200) {
-      switch (result['responseType'] as String) {
-        case 'INITIATE':
-          {
-            print("INItiateotp $result");
-          }
-          break;
-        case 'VERIFY':
-          {
-            print("VERIFYotp $result");
-            // notify that verification is completed
-            // and this is notified just before "ONETAP" final response
-          }
-          break;
-        case 'OTP_AUTO_READ':
-          {
-            print("OTP_AUTO_READotp $result");
-            if (Platform.isAndroid) {
-              var otp = result['response']['otp'] as String;
-              //otpFieldController.set(otp.split(""));
-              //controller.headlessOtplessVerifyOtp(controller.creds["otp"], onHeadlessResult);
-            }
-          }
-          break;
-        case 'ONETAP':
-          {
-            print("ONETAPotp $result");
-            final token = result["response"]["token"];
-            Get.showSnackbar(
-              const GetSnackBar(
-                duration: Duration(seconds: 2),
-                message: "OTP Verified Successfully!",
-              ),
-            );
-            Get.offNamed(Routes.REGISTER);
-          }
-          break;
-      }
-    } else {
-      print("not 200otp $result");
-      Get.showSnackbar(
-        GetSnackBar(
-          duration: const Duration(seconds: 2),
-          message: result['response']['errorMessage'] as String,
-        ),
-      );
-    }
   }
 }

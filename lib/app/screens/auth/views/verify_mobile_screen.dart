@@ -1,10 +1,8 @@
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:matrimony/app/constants/constants_assets.dart';
-import 'package:matrimony/app/routes/app_routes.dart';
 
 import '../../../../common/color_pallete.dart';
 import '../../../components/ui/my_list_view.dart';
@@ -126,7 +124,8 @@ class VerifyMobileScreen extends GetView<AuthController> {
                                       children: [
                                         InkWell(
                                           onTap: () {
-                                            controller.headlessOtplessInitiate(controller.user.value.mobile!, onHeadlessResult);
+                                            FocusScope.of(context).unfocus();
+                                            controller.sendMobileOtp();
                                           },
                                           child: const RoundedContainer(
                                             radius: 10,
@@ -168,65 +167,5 @@ class VerifyMobileScreen extends GetView<AuthController> {
         ),
       ),
     );
-  }
-
-  void onHeadlessResult(dynamic result) {
-    print("out $result");
-    controller.isLoading.value = false;
-    if (result['statusCode'] == 200) {
-      switch (result['responseType'] as String) {
-        case 'INITIATE':
-          {
-            print("INItiate $result");
-            Get.showSnackbar(
-              const GetSnackBar(
-                duration: Duration(seconds: 2),
-                message:
-                "OTP Sent Successfully!",
-              ),
-            );
-            Get.toNamed(Routes.VERIFY_OTP);
-          }
-          break;
-        case 'VERIFY':
-          {
-            print("VERIFY $result");
-            // notify that verification is completed
-            // and this is notified just before "ONETAP" final response
-          }
-          break;
-        case 'OTP_AUTO_READ':
-          {
-            print("OTP_AUTO_READ $result");
-            if (Platform.isAndroid) {
-              var otp = result['response']['otp'] as String;
-            }
-          }
-          break;
-        case 'ONETAP':
-          {
-            print("ONETAP $result");
-            final token = result["response"]["token"];
-            Get.showSnackbar(
-              const GetSnackBar(
-                duration: Duration(seconds: 2),
-                message:
-                "Mobile Verified Successfully!",
-              ),
-            );
-            Get.toNamed(Routes.REGISTER);
-          }
-          break;
-      }
-    } else {
-      print("not 200 $result");
-      Get.showSnackbar(
-        GetSnackBar(
-          duration: const Duration(seconds: 2),
-          message:
-          result['response']['errorMessage'] as String,
-        ),
-      );
-    }
   }
 }

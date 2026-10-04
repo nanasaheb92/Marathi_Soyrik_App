@@ -6,16 +6,49 @@ import '../../../components/ui/my_list_view.dart';
 import '../../../components/ui/rounded_container.dart';
 import '../../../components/ui/text_view.dart';
 import '../../../models/package_model.dart';
+import '../../../routes/app_routes.dart';
 import '../controllers/settings_controller.dart';
 
 class PackagesScreen extends GetView<SettingsController> {
   const PackagesScreen({super.key});
+
+  /// Opened directly after signup: there is no previous screen, so leaving
+  /// this page must go to Home instead of popping.
+  bool get _fromSignup => Get.arguments?["fromSignup"] ?? false;
+
+  void _close() {
+    if (_fromSignup) {
+      Get.offAllNamed(Routes.HOME);
+    } else {
+      Get.back();
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     // double baseWidth = 360;
     // double fem = MediaQuery.of(context).size.width / baseWidth;
     controller.fetchPackages();
+    return PopScope(
+      canPop: !_fromSignup,
+      onPopInvoked: (didPop) {
+        if (!didPop) _close();
+      },
+      child: Stack(
+        children: [
+          _buildBody(context),
+          Obx(() => controller.isPaymentLoading.value
+              ? Container(
+                  color: Colors.black45,
+                  child: const Center(child: CircularProgressIndicator()),
+                )
+              : const SizedBox.shrink()),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBody(BuildContext context) {
     return Scaffold(
       extendBody: true,
       backgroundColor: ColorPallete.primary,
@@ -79,9 +112,7 @@ class PackagesScreen extends GetView<SettingsController> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     InkWell(
-                                      onTap: () {
-                                        Get.back();
-                                      },
+                                      onTap: _close,
                                       child: const Icon(
                                         Icons.arrow_back,
                                         color: ColorPallete.theme,
@@ -94,9 +125,19 @@ class PackagesScreen extends GetView<SettingsController> {
                                       fontSize: 20,
                                       weight: FontWeight.bold,
                                     ),
-                                    const SizedBox(
-                                      width: 25,
-                                    )
+                                    _fromSignup
+                                        ? InkWell(
+                                            onTap: _close,
+                                            child: const TextView(
+                                              text: "Skip",
+                                              color: ColorPallete.theme,
+                                              fontSize: 14,
+                                              weight: FontWeight.bold,
+                                            ),
+                                          )
+                                        : const SizedBox(
+                                            width: 25,
+                                          )
                                   ],
                                 ),
                               ),
