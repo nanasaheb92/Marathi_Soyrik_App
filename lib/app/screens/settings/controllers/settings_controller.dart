@@ -41,7 +41,7 @@ class SettingsController extends GetxController {
   RxBool isPaymentLoading = false.obs;
 
   /// 1. server creates signed PhonePe request  (phonepe_initiate.php)
-  /// 2. PhonePe SDK opens the payment page
+  /// 2. PhonePe payment page opens in a Chrome Custom Tab (same as the website)
   /// 3. server confirms the payment with PhonePe and activates the package
   ///    (phonepe_status.php)
   Future<void> makePayment(BuildContext context, Package package) async {
@@ -63,19 +63,19 @@ class SettingsController extends GetxController {
         return;
       }
 
-      final sdkStatus = await PhonePePG.getInstance.startTransaction(
+      isPaymentLoading.value = false;
+      final pageStatus = await PhonePePG.startTransaction(
         env: data["env"].toString(),
-        merchantId: data["merchant_id"].toString(),
         body: data["body"].toString(),
         checksum: data["checksum"].toString(),
-        callbackUrl: data["callback_url"].toString(),
       );
-      if (sdkStatus == "INIT_FAILED" || sdkStatus.startsWith("ERROR")) {
-        _showPaymentMessage("Could not open PhonePe ($sdkStatus)", false);
+      isPaymentLoading.value = true;
+      if (pageStatus.startsWith("ERROR")) {
+        _showPaymentMessage("Could not open PhonePe ($pageStatus)", false);
         return;
       }
 
-      // Never trust the SDK result alone - ask the server.
+      // Never trust the page result alone - ask the server.
       final status =
           await _settingsRepository.checkPhonePeStatus(transactionId);
       final String state = status.status == Status.COMPLETED
@@ -87,13 +87,10 @@ class SettingsController extends GetxController {
         fetchMyPackage();
         Get.offAllNamed(Routes.HOME);
         Get.toNamed(Routes.MY_PACKAGE);
-      } else if (sdkStatus == "INTERRUPTED") {
-        _showPaymentMessage("Payment cancelled", false);
-      } else if (sdkStatus == "FAILURE") {
-        _showPaymentMessage("Payment failed. Please try again.", false);
       } else if (state == "PENDING") {
+        // PhonePe reports an unpaid / closed page as pending too
         _showPaymentMessage(
-            "Payment is pending. Your package will be activated once confirmed.",
+            "Payment not completed. If money was deducted, your package will be activated shortly.",
             false);
       } else {
         _showPaymentMessage("Payment failed. Please try again.", false);

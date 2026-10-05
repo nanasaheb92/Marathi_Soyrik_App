@@ -51,8 +51,6 @@ dependencies:
   path_provider: ^2.1.1
   # URL LAUNCH
   url_launcher: 
-  # PHONE_PE
-  phonepe_payment_sdk: 2.0.3
   # HTML VIEWER
   flutter_html: ^3.0.0-beta.2
   # RAZORPAY

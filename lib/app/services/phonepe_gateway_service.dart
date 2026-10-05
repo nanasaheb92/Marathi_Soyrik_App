@@ -1,54 +1,78 @@
-import 'package:flutter/foundation.dart';
-import 'package:phonepe_payment_sdk/phonepe_payment_sdk.dart';
+import 'dart:async';
 
-/// Opens the PhonePe payment page using the native SDK.
+import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+/// Opens the PhonePe payment page the same way the website (buy_pack.php) does.
 ///
-/// The request body and checksum are generated on the server
-/// (apis/phonepe_initiate.php) so the salt key never ships inside the app.
+/// The server (apis/phonepe_initiate.php) signs the request (body + checksum)
+/// so the salt key never ships inside the app. The app sends that signed
+/// request to PhonePe, gets the payment page URL and opens it in a Chrome
+/// Custom Tab (real browser, so the page and UPI apps work like the website).
+/// When the user returns to the app, the caller verifies the result with the
+/// server.
 class PhonePePG {
-  static final PhonePePG _instance = PhonePePG._();
-  static PhonePePG get getInstance => _instance;
   PhonePePG._();
 
-  bool enableLogging = kDebugMode;
-  String? _initialisedFor;
+  static const _payUrls = {
+    "PRODUCTION": "https://api.phonepe.com/apis/hermes/pg/v1/pay",
+    "SANDBOX": "https://api-preprod.phonepe.com/apis/pg-sandbox/pg/v1/pay",
+  };
 
-  Future<bool> _init(String env, String merchantId) async {
-    final key = "$env|$merchantId";
-    if (_initialisedFor == key) return true;
-    try {
-      final ok =
-          await PhonePePaymentSdk.init(env, "", merchantId, enableLogging);
-      if (ok) _initialisedFor = key;
-      return ok;
-    } catch (e) {
-      if (kDebugMode) print("--- PhonePe SDK init error: $e");
-      return false;
-    }
-  }
-
-  /// Returns the SDK status: SUCCESS, FAILURE, INTERRUPTED or an error text.
-  /// SUCCESS here only means the flow finished - always confirm with the
-  /// server status API before activating the package.
-  Future<String> startTransaction({
+  /// Returns "FINISHED" when the user is back in the app,
+  /// or "ERROR: ..." if the payment page could not be opened.
+  static Future<String> startTransaction({
     required String env,
-    required String merchantId,
     required String body,
     required String checksum,
-    required String callbackUrl,
   }) async {
-    if (!await _init(env, merchantId)) {
-      return "INIT_FAILED";
-    }
+    final String payPageUrl;
     try {
-      // packageName "" -> PhonePe shows its own pay page (UPI / card / netbanking)
-      final val = await PhonePePaymentSdk.startTransaction(
-          body, callbackUrl, checksum, "");
-      if (kDebugMode) print("--- PhonePe SDK result: $val");
-      if (val == null) return "INCOMPLETE";
-      return val["status"].toString();
-    } catch (e) {
-      return "ERROR: $e";
+      final res = await Dio().post(
+        _payUrls[env] ?? _payUrls["PRODUCTION"]!,
+        data: {"request": body},
+        options: Options(headers: {
+          "Content-Type": "application/json",
+          "X-VERIFY": checksum,
+        }),
+      );
+      if (kDebugMode) print("--- PhonePe pay response: ${res.data}");
+      final url =
+          res.data?["data"]?["instrumentResponse"]?["redirectInfo"]?["url"];
+      if (res.data?["code"] != "PAYMENT_INITIATED" || url == null) {
+        return "ERROR: ${res.data?["message"] ?? "Payment initiation failed"}";
+      }
+      payPageUrl = url.toString();
+    } on DioException catch (e) {
+      if (kDebugMode) print("--- PhonePe pay error: ${e.response?.data}");
+      return "ERROR: ${e.response?.data?["message"] ?? "Payment initiation failed"}";
     }
+
+    final returned = _waitForAppResume();
+    final opened = await launchUrl(Uri.parse(payPageUrl),
+        mode: LaunchMode.inAppBrowserView);
+    if (!opened) return "ERROR: Could not open payment page";
+    await returned;
+    return "FINISHED";
+  }
+
+  /// Completes when the app comes back to the foreground
+  /// (user closed the payment tab or came back from the UPI app).
+  static Future<void> _waitForAppResume() {
+    final completer = Completer<void>();
+    var leftApp = false;
+    late final AppLifecycleListener listener;
+    listener = AppLifecycleListener(
+      onHide: () => leftApp = true,
+      onResume: () {
+        if (leftApp && !completer.isCompleted) {
+          listener.dispose();
+          completer.complete();
+        }
+      },
+    );
+    return completer.future;
   }
 }
