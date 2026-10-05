@@ -8,7 +8,6 @@ import '../../../models/package_model.dart';
 import '../../../models/success_story_model.dart';
 import '../../../repositories/settings_repository.dart';
 import '../../../routes/app_routes.dart';
-import '../../../services/auth_service.dart';
 import '../../../services/phonepe_gateway_service.dart';
 
 class SettingsController extends GetxController {
@@ -43,7 +42,8 @@ class SettingsController extends GetxController {
 
   /// 1. server creates signed PhonePe request  (phonepe_initiate.php)
   /// 2. PhonePe SDK opens the payment page
-
+  /// 3. server confirms the payment with PhonePe and activates the package
+  ///    (phonepe_status.php)
   Future<void> makePayment(BuildContext context, Package package) async {
     if (isPaymentLoading.value) return;
     isPaymentLoading.value = true;
@@ -56,9 +56,7 @@ class SettingsController extends GetxController {
       }
       final data = init.data["data"];
       final String transactionId = data["transaction_id"].toString();
-
-      // Server must return a PhonePe v2 order (order_id + token)
-      if (data["order_id"] == null || data["token"] == null) {
+      if (data["body"] == null || data["checksum"] == null) {
         _showPaymentMessage(
             "Payment is not available right now. Please try again later.",
             false);
@@ -68,17 +66,10 @@ class SettingsController extends GetxController {
       final sdkStatus = await PhonePePG.getInstance.startTransaction(
         env: data["env"].toString(),
         merchantId: data["merchant_id"].toString(),
-        flowId: (data["flow_id"] ??
-                Get.find<AuthService>().user.value.userId ??
-                transactionId)
-            .toString(),
-        orderId: data["order_id"].toString(),
-        token: data["token"].toString(),
+        body: data["body"].toString(),
+        checksum: data["checksum"].toString(),
+        callbackUrl: data["callback_url"].toString(),
       );
-      if (sdkStatus == "INTERRUPTED") {
-        _showPaymentMessage("Payment cancelled", false);
-        return;
-      }
       if (sdkStatus == "INIT_FAILED" || sdkStatus.startsWith("ERROR")) {
         _showPaymentMessage("Could not open PhonePe ($sdkStatus)", false);
         return;
@@ -96,7 +87,11 @@ class SettingsController extends GetxController {
         fetchMyPackage();
         Get.offAllNamed(Routes.HOME);
         Get.toNamed(Routes.MY_PACKAGE);
-      } else if (state == "PENDING" && sdkStatus != "FAILURE") {
+      } else if (sdkStatus == "INTERRUPTED") {
+        _showPaymentMessage("Payment cancelled", false);
+      } else if (sdkStatus == "FAILURE") {
+        _showPaymentMessage("Payment failed. Please try again.", false);
+      } else if (state == "PENDING") {
         _showPaymentMessage(
             "Payment is pending. Your package will be activated once confirmed.",
             false);
