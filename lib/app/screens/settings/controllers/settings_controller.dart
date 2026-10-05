@@ -8,6 +8,7 @@ import '../../../models/package_model.dart';
 import '../../../models/success_story_model.dart';
 import '../../../repositories/settings_repository.dart';
 import '../../../routes/app_routes.dart';
+import '../../../services/auth_service.dart';
 import '../../../services/phonepe_gateway_service.dart';
 
 class SettingsController extends GetxController {
@@ -56,12 +57,23 @@ class SettingsController extends GetxController {
       final data = init.data["data"];
       final String transactionId = data["transaction_id"].toString();
 
+      // Server must return a PhonePe v2 order (order_id + token)
+      if (data["order_id"] == null || data["token"] == null) {
+        _showPaymentMessage(
+            "Payment is not available right now. Please try again later.",
+            false);
+        return;
+      }
+
       final sdkStatus = await PhonePePG.getInstance.startTransaction(
         env: data["env"].toString(),
         merchantId: data["merchant_id"].toString(),
-        body: data["body"].toString(),
-        checksum: data["checksum"].toString(),
-        callbackUrl: data["callback_url"].toString(),
+        flowId: (data["flow_id"] ??
+                Get.find<AuthService>().user.value.userId ??
+                transactionId)
+            .toString(),
+        orderId: data["order_id"].toString(),
+        token: data["token"].toString(),
       );
       if (sdkStatus == "INTERRUPTED") {
         _showPaymentMessage("Payment cancelled", false);
