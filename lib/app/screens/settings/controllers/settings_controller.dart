@@ -67,6 +67,10 @@ class SettingsController extends GetxController {
         _showPaymentMessage("Payment cancelled", false);
         return;
       }
+      if (sdkStatus == "INIT_FAILED" || sdkStatus.startsWith("ERROR")) {
+        _showPaymentMessage("Could not open PhonePe ($sdkStatus)", false);
+        return;
+      }
 
       // Never trust the SDK result alone - ask the server.
       final status =
@@ -80,7 +84,7 @@ class SettingsController extends GetxController {
         fetchMyPackage();
         Get.offAllNamed(Routes.HOME);
         Get.toNamed(Routes.MY_PACKAGE);
-      } else if (state == "PENDING") {
+      } else if (state == "PENDING" && sdkStatus != "FAILURE") {
         _showPaymentMessage(
             "Payment is pending. Your package will be activated once confirmed.",
             false);

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:phonepe_payment_sdk/phonepe_payment_sdk.dart';
 
 /// Opens the PhonePe payment page using the native SDK.
@@ -9,7 +10,7 @@ class PhonePePG {
   static PhonePePG get getInstance => _instance;
   PhonePePG._();
 
-  bool enableLogging = false;
+  bool enableLogging = kDebugMode;
   String? _initialisedFor;
 
   Future<bool> _init(String env, String merchantId) async {
@@ -40,6 +41,7 @@ class PhonePePG {
     try {
       final val = await PhonePePaymentSdk.startTransaction(
           body, callbackUrl, checksum, "");
+      if (kDebugMode) print("--- PhonePe SDK result: $val");
       if (val == null) return "INCOMPLETE";
       return val["status"].toString();
     } catch (e) {
